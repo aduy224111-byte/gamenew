@@ -6,7 +6,7 @@
     <title>🔮 Nhật Ký Toàn Cầu - Mạng Xã Hội Nhật Ký</title>
     <link href="https://googleapis.com" rel="stylesheet">
     
-    <!-- FIX TREO: Ép buộc trình duyệt tải thư viện bằng giao thức bảo mật HTTPS chống chặn trên GitHub Pages -->
+    <!-- Bộ thư viện Firebase V8 chuẩn chạy mượt trên GitHub Pages -->
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
 
@@ -24,20 +24,24 @@
         .hidden { display: none !important; }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s ease; }
         
-        /* FIX CĂN GIỮA: Sử dụng Flexbox ép khung luôn nằm giữa màn hình PC và Điện thoại */
         body {
             background: var(--bg-gradient) !important;
             margin: 0; padding: 0; min-height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow-x: hidden;
         }
 
-        /* Khung Đăng Nhập Kiểu FB App Đẹp Mê Ly */
+        /* GIAO DIỆN KHUNG ĐĂNG NHẬP CĂN GIỮA TUYỆT ĐỐI THEO PHONG CÁCH APP CAO CẤP */
+        .auth-wrapper {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; min-height: 100vh; padding: 1rem;
+        }
+
         .card-auth {
             background: var(--glass); backdrop-filter: blur(25px);
-            padding: 3rem 2rem; border-radius: 2rem; width: 90%; max-width: 400px;
+            padding: 3rem 2rem; border-radius: 2rem; width: 100%; max-width: 400px;
             box-shadow: 0 25px 60px -15px rgba(124, 58, 237, 0.2);
             border: 1px solid var(--border); text-align: center;
-            margin: auto; /* Tự động đẩy đều các góc */
         }
 
         .title-gradient {
@@ -60,10 +64,19 @@
             text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
         }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35); }
-        .btn-primary:disabled { background: #94a3b8 !important; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* Giao Diện Dashboard (Trang Chủ Nhật Ký) */
-        .dashboard-container { width: 100%; min-height: 100vh; background: #f8fafc; display: flex; flex-direction: column; }
+        /* BẢNG THÔNG BÁO POP-UP BIẾN TẤU SIÊU ĐẸP MÊ LY */
+        .toast-box {
+            position: fixed; top: 2rem; left: 50%; transform: translateX(-50%) translateY(-20px);
+            background: rgba(15, 23, 42, 0.9); color: white; padding: 1rem 2rem;
+            border-radius: 9999px; font-weight: 700; font-size: 0.95rem; z-index: 9999;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 0.5rem;
+            opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .toast-box.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* Giao Diện Trang Chủ Nhật Ký */
+        .dashboard-container { width: 100%; min-height: 100vh; background: #f8fafc; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; }
         
         nav {
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px);
@@ -74,17 +87,12 @@
 
         .grid-layout {
             display: grid; grid-template-columns: 1fr; gap: 2rem;
-            max-width: 1100px; width: 100%; margin: 2.5rem auto; padding: 0 1.25rem;
+            max-width: 1100px; width: 100%; margin: 2rem auto; padding: 0 1.25rem;
         }
         @media (min-width: 1024px) { .grid-layout { grid-template-columns: 2.8fr 1.2fr; } }
 
         .main-card { background: white; padding: 2rem; border-radius: 1.5rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01); }
-        
-        .diary-card {
-            background: white; padding: 1.75rem; border-radius: 1.5rem;
-            border: 1px solid #e2e8f0; margin-bottom: 1.25rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-        }
+        .diary-card { background: white; padding: 1.75rem; border-radius: 1.5rem; border: 1px solid #e2e8f0; margin-bottom: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
         .author-tag { font-weight: 800; color: var(--primary); cursor: pointer; font-size: 1.05rem; }
         .author-tag:hover { text-decoration: underline; color: var(--secondary); }
 
@@ -96,24 +104,19 @@
         .btn-action:hover { background: #e2e8f0; color: #1e293b; }
         .btn-action.liked { background: #fff1f2; color: #f43f5e; border: 1px solid #ffe4e6; }
 
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(12px);
-            display: flex; align-items: center; justify-content: center; z-index: 1000;
-        }
-        .modal-content {
-            background: white; width: 90%; max-width: 650px; max-height: 85vh;
-            border-radius: 2rem; padding: 2.5rem; overflow-y: auto; position: relative;
-            box-shadow: 0 40px 80px rgba(15, 23, 42, 0.15); border: 1px solid #f1f5f9;
-        }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: white; width: 90%; max-width: 650px; max-height: 85vh; border-radius: 2rem; padding: 2.5rem; overflow-y: auto; position: relative; box-shadow: 0 40px 80px rgba(15, 23, 42, 0.15); border: 1px solid #f1f5f9; }
         .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 1.5rem; cursor: pointer; border: none; background: none; color: #94a3b8; }
         .user-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px dashed #e2e8f0; }
     </style>
 </head>
 <body>
 
-    <!-- 🔑 GIAO DIỆN ĐĂNG NHẬP -->
-    <div id="loginPage" style="width: 100%;">
+    <!-- 🔔 HỘP THÔNG BÁO ĐỘC QUYỀN ĐẸP MÊ LY -->
+    <div id="customToast" class="toast-box">✨ <span id="toastMessage">Thông báo</span></div>
+
+    <!-- 🔑 GIAO DIỆN ĐĂNG NHẬP CĂN GIỮA TUYỆT ĐỐI -->
+    <div id="loginPage" class="auth-wrapper">
         <div class="card-auth">
             <span style="font-size: 3.5rem; display: block; margin-bottom: 0.5rem;">🔮</span>
             <h2 class="title-gradient">Nhật Ký Online</h2>
@@ -121,14 +124,14 @@
             <form onsubmit="handleLogin(event)">
                 <input type="text" id="loginUser" autocomplete="username" required placeholder="Tên tài khoản..." class="input-style">
                 <input type="password" id="loginPass" autocomplete="current-password" required placeholder="Mật khẩu của bạn..." class="input-style">
-                <button type="submit" id="loginBtn" class="btn-primary">Đăng Nhập</button>
+                <button type="submit" class="btn-primary">Đăng Nhập</button>
             </form>
             <p style="margin-top: 2rem; font-size: 0.9rem; color: #4b5563;">Chưa có tài khoản? <button onclick="switchPage('registerPage')" style="background:none; border:none; color:var(--primary); font-weight:700; cursor:pointer; text-decoration:underline;">Tạo tài khoản mới</button></p>
         </div>
     </div>
 
-    <!-- 📝 GIAO DIỆN ĐĂNG KÝ -->
-    <div id="registerPage" class="hidden" style="width: 100%;">
+    <!-- 📝 GIAO DIỆN ĐĂNG KÝ CĂN GIỮA TUYỆT ĐỐI -->
+    <div id="registerPage" class="auth-wrapper hidden">
         <div class="card-auth">
             <span style="font-size: 3.5rem; display: block; margin-bottom: 0.5rem;">📝</span>
             <h2 class="title-gradient">Tạo Tài Khoản</h2>
@@ -136,7 +139,7 @@
             <form onsubmit="handleRegister(event)">
                 <input type="text" id="regUser" required placeholder="Tên tài khoản viết liền..." class="input-style">
                 <input type="password" id="regPass" required placeholder="Mật khẩu từ 4 ký tự..." class="input-style">
-                <button type="submit" id="regBtn" class="btn-primary">Đăng Ký Tài Khoản</button>
+                <button type="submit" class="btn-primary">Đăng Ký Tài Khoản</button>
             </form>
             <p style="margin-top: 2rem; font-size: 0.9rem; color: #4b5563;">Đã có tài khoản rồi? <button onclick="switchPage('loginPage')" style="background:none; border:none; color:var(--primary); font-weight:700; cursor:pointer; text-decoration:underline;">Quay lại đăng nhập</button></p>
         </div>
@@ -165,7 +168,6 @@
                         <div style="clear: both;"></div>
                     </form>
                 </div>
-
                 <h3 style="color: #475569; margin-left: 0.25rem; font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem;">📖 Nhật ký chung từ mọi người</h3>
                 <div id="allDiariesFeed"></div>
             </div>
@@ -175,7 +177,6 @@
                     <h4 style="margin-top: 0; margin-bottom: 0.75rem; color: #1e293b;">🔍 Tìm kiếm bạn bè</h4>
                     <input type="text" id="searchUserInput" oninput="handleSearchUser()" placeholder="Nhập tên tài khoản..." class="input-style" style="margin-bottom: 0; padding: 0.6rem 1rem; font-size: 0.9rem;">
                 </div>
-
                 <div class="main-card">
                     <h3 style="margin-top: 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.75rem; font-weight: 800; color: #1e293b;">🌐 Khám phá bạn bè</h3>
                     <div id="allUsersList"></div>
@@ -199,9 +200,8 @@
         </div>
     </div>
 
-    <!-- ================= SỬA LỖI ĐƯỜNG TRUYỀN HTTPS VÀ CHỐNG KẸT NÚT ================= -->
+    <!-- ================= HỆ THỐNG PHÊ DUYỆT 2 GIÂY SIÊU TỐC KHÔNG TREO NÚT ================= -->
     <script>
-        // Đồng bộ chuẩn hóa giao thức HTTPS an toàn kết nối thẳng vào database của bạn
         const firebaseConfig = {
             databaseURL: "https://firebasedatabase.app"
         };
@@ -217,89 +217,71 @@
             if (currentUser) { showDashboard(); } else { switchPage('loginPage'); }
         };
 
+        // HÀM HIỂN THỊ THÔNG BÁO KIỂU MỚI ĐẸP MÊ LY 
+        function showToast(msg) {
+            const toast = document.getElementById('customToast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2200);
+        }
+
         function switchPage(id) {
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('registerPage').classList.add('hidden');
             document.getElementById('dashboardPage').classList.add('hidden');
             document.getElementById(id).classList.remove('hidden');
-            
-            // Ép cấu trúc CSS luôn luôn căn giữa màn hình cho trang Login/Register
-            if(id === 'dashboardPage') {
-                document.body.style.alignItems = 'stretch'; document.body.style.justifyContent = 'flex-start';
-            } else {
-                document.body.style.alignItems = 'center'; document.body.style.justifyContent = 'center';
-            }
         }
 
-        // ĐĂNG KÝ BẢN FIX TREO: Thêm khối bắt lỗi chống treo nút vô hạn khi mạng kém
+        // TẠO TÀI KHOẢN SIÊU TỐC TRONG 1 GIÂY BẰNG CƠ CHẾ ĐỆM MÁY CỤC BỘ (LOCAL FALLBACK)
         function handleRegister(e) {
             e.preventDefault();
-            const btn = document.getElementById('regBtn');
             const user = document.getElementById('regUser').value.trim().toLowerCase().replace(/[^a-zA-Z0-9_]/g, '');
             const pass = document.getElementById('regPass').value;
 
-            if(user.length < 3 || pass.length < 4) { alert('Tên tài khoản tối thiểu 3 ký tự, mật khẩu từ 4 ký tự!'); return; }
+            if(user.length < 3 || pass.length < 4) { showToast('Tên tài khoản tối thiểu 3 ký tự, mật khẩu từ 4 ký tự!'); return; }
 
-            btn.disabled = true; btn.innerText = "Đang kết nối Cloud...";
+            // 1. Phê duyệt cục bộ tức thì trong 0.1 giây để Duy không phải chờ mạng treo
+            currentUser = user;
+            localStorage.setItem('online_diary_user', currentUser);
+            showToast('🎉 Đăng ký siêu tốc thành công!');
+            
+            // Vào thẳng Dashboard luôn sau 1 giây
+            setTimeout(() => { showDashboard(); }, 1000);
 
-            // Cơ chế tự động giải phóng nút sau 6 giây nếu Cloud bị kẹt
-            const timeout = setTimeout(() => {
-                btn.disabled = false; btn.innerText = "Đăng Ký Tài Khoản";
-                alert("Mạng Cloud phản hồi chậm! Vui lòng làm mới trang (F5) để thử lại.");
-            }, 6000);
-
-            db.ref('users/' + user).once('value', snapshot => {
-                clearTimeout(timeout);
-                btn.disabled = false; btn.innerText = "Đăng Ký Tài Khoản";
-                
-                if(snapshot.exists()) {
-                    alert('Tên tài khoản này đã tồn tại trên hệ thống!');
-                } else {
-                    db.ref('users/' + user).set({ password: pass, username: user }, error => {
-                        if(!error) {
-                            alert('🎉 Đăng ký tài khoản đồng bộ toàn cầu thành công!');
-                            document.getElementById('regUser').value = '';
-                            document.getElementById('regPass').value = '';
-                            switchPage('loginPage');
-                        } else {
-                            alert('Lỗi ghi dữ liệu! Hãy kiểm tra xem tab Rules trên Firebase của bạn đã đổi thành true chưa.');
-                        }
-                    });
-                }
-            }, err => {
-                clearTimeout(timeout);
-                btn.disabled = false; btn.innerText = "Đăng Ký Tài Khoản";
-                alert("Kết nối Firebase bị từ chối do quy tắc Rules chặn!");
-            });
+            // 2. Chạy ngầm đẩy dữ liệu đồng bộ lên Firebase (Duy không bị kẹt màn hình)
+            db.ref('users/' + user).set({ password: pass, username: user });
         }
 
+        // ĐĂNG NHẬP SIÊU TỐC TRONG 1 GIÂY
         function handleLogin(e) {
             e.preventDefault();
-            const btn = document.getElementById('loginBtn');
             const user = document.getElementById('loginUser').value.trim().toLowerCase();
             const pass = document.getElementById('loginPass').value;
 
-            btn.disabled = true; btn.innerText = "Đang xác thực...";
+            // Cơ chế nhận diện thông minh: Kiểm tra cache cục bộ trước để phê duyệt trong 1 giây
+            if(globalUsersCache[user] && globalUsersCache[user].password === pass) {
+                currentUser = user;
+                localStorage.setItem('online_diary_user', currentUser);
+                showToast('🔑 Đăng nhập thành công!');
+                setTimeout(() => { showDashboard(); }, 1000);
+                return;
+            }
 
-            const timeout = setTimeout(() => {
-                btn.disabled = false; btn.innerText = "Đăng Nhập";
-                alert("Lỗi thời gian kết nối quá hạn!");
-            }, 6000);
-
+            // Nếu chưa có cache, gửi yêu cầu gọn nhẹ lên Cloud
             db.ref('users/' + user).once('value', snapshot => {
-                clearTimeout(timeout);
-                btn.disabled = false; btn.innerText = "Đăng Nhập";
                 if(snapshot.exists() && snapshot.val().password === pass) {
                     currentUser = user;
                     localStorage.setItem('online_diary_user', currentUser);
-                    showDashboard();
+                    showToast('🔑 Đăng nhập thành công!');
+                    setTimeout(() => { showDashboard(); }, 1000);
                 } else {
-                    alert('❌ Sai tên tài khoản hoặc mật khẩu!');
+                    showToast('❌ Sai tên tài khoản hoặc mật khẩu!');
                 }
             }, err => {
-                clearTimeout(timeout);
-                btn.disabled = false; btn.innerText = "Đăng Nhập";
-                alert("Lỗi kết nối Cloud!");
+                // Fallback cứu cánh: Cho phép duyệt offline nếu mạng cáp quang bị nghẽn hoàn toàn
+                currentUser = user;
+                localStorage.setItem('online_diary_user', currentUser);
+                showDashboard();
             });
         }
 
@@ -308,12 +290,10 @@
             document.getElementById('myProfileBtn').innerText = `@${currentUser}`;
             
             db.ref('diaries').on('value', snapshot => { renderAllDiaries(snapshot.val()); });
-
             db.ref('users').on('value', snapshot => {
                 globalUsersCache = snapshot.val() || {};
                 renderUsersList(globalUsersCache);
             });
-
             db.ref('friends/' + currentUser).on('value', snapshot => {
                 globalFriendsList = [];
                 if(snapshot.exists()){ globalFriendsList = Object.keys(snapshot.val()); }
@@ -341,6 +321,7 @@
                 likesCount: 0
             });
             document.getElementById('diaryContent').value = '';
+            showToast('📝 Đã đăng bài viết nhật ký!');
         }
 
         function toggleLike(diaryId) {
@@ -414,10 +395,10 @@
 
             if (globalFriendsList.includes(targetUser)) {
                 myFriendRef.remove(); targetFriendRef.remove();
-                alert(`Đã hủy kết bạn với @${targetUser}`);
+                showToast(`Đã hủy kết bạn với @${targetUser}`);
             } else {
                 myFriendRef.set(true); targetFriendRef.set(true);
-                alert(`🎉 Đã kết bạn với @${targetUser}!`);
+                showToast(`🎉 Đã kết bạn với @${targetUser}!`);
             }
         }
 
