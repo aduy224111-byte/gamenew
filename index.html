@@ -7,8 +7,6 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js">
     </script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js">
-    </script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js">
     </script>
     
@@ -17,7 +15,7 @@
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
+        html, body {
             min-height: 100vh;
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #0a0a1a, #1a0a2e, #0a0a1a);
@@ -26,12 +24,12 @@
             align-items: center;
             justify-content: center;
             padding: 15px;
+            -webkit-tap-highlight-color: transparent;
         }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0a0a1a; }
         ::-webkit-scrollbar-thumb { background: linear-gradient(#ff2d75, #a855f7); border-radius: 10px; }
 
-        /* ====== LOGIN ====== */
         .login-screen {
             position: fixed;
             inset: 0;
@@ -47,7 +45,7 @@
         .login-box {
             width: 100%;
             max-width: 400px;
-            padding: 40px 30px;
+            padding: 35px 25px;
             text-align: center;
             background: rgba(15, 23, 42, 0.98);
             border-radius: 24px;
@@ -59,57 +57,83 @@
             0% { opacity: 0; transform: scale(0.9) translateY(-30px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
-        .login-box .logo { font-size: 50px; }
+        .login-box .logo { font-size: 45px; }
         .login-box h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-family: 'Dancing Script', cursive;
             background: linear-gradient(90deg, #ff2d75, #a855f7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin: 8px 0 4px;
+            margin: 5px 0 3px;
         }
-        .login-box p { color: #8888aa; font-size: 0.85rem; margin-bottom: 25px; }
+        .login-box .sub { color: #8888aa; font-size: 0.8rem; margin-bottom: 20px; }
 
         .login-box input {
             width: 100%;
-            padding: 14px 18px;
+            padding: 14px 16px;
             background: rgba(2, 6, 23, 0.8);
             border: 1px solid #2a1a4a;
             border-radius: 12px;
             color: #fff;
-            font-size: 0.9rem;
-            margin-bottom: 12px;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
             outline: none;
             transition: 0.3s;
+            -webkit-appearance: none;
+            text-align: center;
         }
-        .login-box input:focus { border-color: #ff2d75; box-shadow: 0 0 25px rgba(255, 45, 117, 0.15); }
+        .login-box input:focus { 
+            border-color: #ff2d75; 
+            box-shadow: 0 0 25px rgba(255, 45, 117, 0.15); 
+        }
+        .login-box input::placeholder { color: #666; }
 
-        .btn {
-            padding: 14px 20px;
+        .btn-login {
+            width: 100%;
+            padding: 14px;
             border: none;
             border-radius: 12px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: 0.3s;
-            width: 100%;
-        }
-        .btn-primary {
             background: linear-gradient(135deg, #ff2d75, #a855f7);
             color: #fff;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
         }
-        .btn-primary:hover { box-shadow: 0 0 30px rgba(255, 45, 117, 0.3); transform: translateY(-2px); }
+        .btn-login:active { transform: scale(0.97); }
+        .btn-login:hover { box-shadow: 0 0 30px rgba(255, 45, 117, 0.3); }
 
-        .login-box .error-msg {
-            color: #ef4444;
+        .login-box .msg {
             font-size: 0.8rem;
             padding: 8px;
-            background: rgba(239, 68, 68, 0.1);
             border-radius: 8px;
             display: none;
             margin-bottom: 10px;
         }
-        .login-box .error-msg.show { display: block; }
+        .login-box .msg.error {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            display: block;
+        }
+        .login-box .msg.success {
+            color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+            display: block;
+        }
+
+        .login-box .toggle-text {
+            color: #8888aa;
+            font-size: 0.8rem;
+            margin-top: 12px;
+        }
+        .login-box .toggle-text span {
+            color: #ff2d75;
+            cursor: pointer;
+            font-weight: 600;
+        }
 
         /* ====== APP ====== */
         .app {
@@ -121,7 +145,6 @@
         }
         .app.active { display: block; }
 
-        /* ====== HEADER ====== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -134,7 +157,7 @@
         }
         .header .logo {
             font-family: 'Dancing Script', cursive;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 700;
             background: linear-gradient(90deg, #ff2d75, #a855f7);
             -webkit-background-clip: text;
@@ -146,15 +169,15 @@
             gap: 10px;
         }
         .header .user-info .avatar {
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             background: linear-gradient(135deg, #ff2d75, #a855f7);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #fff;
         }
         .header .user-info .name { font-weight: 600; font-size: 0.85rem; }
@@ -170,7 +193,6 @@
         }
         .header .user-info .logout-btn:hover { border-color: #ef4444; color: #ef4444; }
 
-        /* ====== TABS ====== */
         .tabs {
             display: flex;
             gap: 4px;
@@ -182,20 +204,21 @@
             overflow-x: auto;
         }
         .tab-btn {
-            padding: 8px 14px;
+            padding: 8px 12px;
             background: transparent;
             border: none;
             border-radius: 8px;
             color: #8888aa;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             transition: 0.3s;
             display: flex;
             align-items: center;
             gap: 4px;
             white-space: nowrap;
         }
+        .tab-btn:active { transform: scale(0.95); }
         .tab-btn.active {
             background: linear-gradient(135deg, #ff2d75, #a855f7);
             color: #fff;
@@ -249,7 +272,7 @@
             margin-top: 8px;
         }
         .btn-sm {
-            padding: 8px 16px;
+            padding: 8px 14px;
             border: none;
             border-radius: 10px;
             font-weight: 700;
@@ -258,11 +281,11 @@
             transition: 0.3s;
             flex: 1;
         }
+        .btn-sm:active { transform: scale(0.95); }
         .btn-pink {
             background: linear-gradient(135deg, #ff2d75, #a855f7);
             color: #fff;
         }
-        .btn-pink:hover { box-shadow: 0 0 30px rgba(255, 45, 117, 0.3); }
         .btn-outline {
             background: transparent;
             border: 1px solid #2a1a4a;
@@ -270,7 +293,6 @@
         }
         .btn-outline:hover { border-color: #ff2d75; color: #ff2d75; }
 
-        /* ====== FEED ====== */
         .feed { display: flex; flex-direction: column; gap: 12px; }
         .post-card {
             background: rgba(17, 17, 34, 0.9);
@@ -279,7 +301,6 @@
             border: 1px solid #2a1a4a;
             transition: 0.3s;
         }
-        .post-card:hover { border-color: #ff2d75; }
         .post-card .post-header {
             display: flex;
             align-items: center;
@@ -287,26 +308,20 @@
             margin-bottom: 10px;
         }
         .post-card .post-header .avatar {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: linear-gradient(135deg, #ff2d75, #a855f7);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #fff;
             flex-shrink: 0;
         }
-        .post-card .post-header .info .name {
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-        .post-card .post-header .info .time {
-            font-size: 0.6rem;
-            color: #8888aa;
-        }
+        .post-card .post-header .info .name { font-weight: 600; font-size: 0.85rem; }
+        .post-card .post-header .info .time { font-size: 0.6rem; color: #8888aa; }
         .post-card .post-content .text {
             color: #c0c0dd;
             font-size: 0.85rem;
@@ -341,10 +356,8 @@
             padding: 4px 8px;
             border-radius: 8px;
         }
-        .post-card .post-actions button:hover { color: #ff2d75; }
         .post-card .post-actions button.liked { color: #ff2d75; }
 
-        /* ====== COMMENTS ====== */
         .comments {
             margin-top: 10px;
             padding-top: 10px;
@@ -368,14 +381,8 @@
             color: #fff;
             flex-shrink: 0;
         }
-        .comments .comment .info .name {
-            font-size: 0.65rem;
-            font-weight: 600;
-        }
-        .comments .comment .info .text {
-            font-size: 0.75rem;
-            color: #c0c0dd;
-        }
+        .comments .comment .info .name { font-size: 0.65rem; font-weight: 600; }
+        .comments .comment .info .text { font-size: 0.75rem; color: #c0c0dd; }
         .comments .comment-input {
             display: flex;
             gap: 6px;
@@ -405,13 +412,12 @@
             flex-shrink: 0;
         }
 
-        /* ====== CHAT ====== */
         .chat-container {
             background: rgba(17, 17, 34, 0.9);
             border-radius: 14px;
             padding: 16px;
             border: 1px solid #2a1a4a;
-            height: 420px;
+            height: 400px;
             display: flex;
             flex-direction: column;
         }
@@ -437,18 +443,8 @@
             background: rgba(42, 26, 74, 0.6);
             color: #e0e0ff;
         }
-        .chat-container .messages .msg .sender {
-            font-weight: 600;
-            font-size: 0.7rem;
-            display: block;
-            margin-bottom: 2px;
-        }
-        .chat-container .messages .msg .time {
-            font-size: 0.55rem;
-            opacity: 0.7;
-            margin-top: 3px;
-            display: block;
-        }
+        .chat-container .messages .msg .sender { font-weight: 600; font-size: 0.7rem; display: block; margin-bottom: 2px; }
+        .chat-container .messages .msg .time { font-size: 0.55rem; opacity: 0.7; margin-top: 3px; display: block; }
         .chat-container .chat-input {
             display: flex;
             gap: 8px;
@@ -479,27 +475,23 @@
             flex-shrink: 0;
         }
 
-        /* ====== COUNTDOWN ====== */
         .countdown-card {
             background: rgba(17, 17, 34, 0.9);
             border-radius: 14px;
-            padding: 30px 20px;
+            padding: 25px 20px;
             border: 1px solid #2a1a4a;
             text-align: center;
         }
         .countdown-card .big-number {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 800;
             background: linear-gradient(90deg, #ff2d75, #a855f7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .countdown-card .label {
-            font-size: 0.9rem;
-            color: #8888aa;
-        }
+        .countdown-card .label { font-size: 0.85rem; color: #8888aa; }
         .countdown-card .heart-icon {
-            font-size: 2.5rem;
+            font-size: 2rem;
             animation: pulse 1.5s ease-in-out infinite;
         }
         @keyframes pulse {
@@ -507,32 +499,31 @@
             50% { transform: scale(1.2); }
         }
 
-        /* ====== PROFILE ====== */
         .profile-card {
             background: rgba(17, 17, 34, 0.9);
             border-radius: 14px;
-            padding: 25px 20px;
+            padding: 20px;
             border: 1px solid #2a1a4a;
             text-align: center;
         }
         .profile-card .big-avatar {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             background: linear-gradient(135deg, #ff2d75, #a855f7);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: #fff;
             margin: 0 auto 10px;
         }
-        .profile-card .username { font-size: 1.2rem; font-weight: 700; }
-        .profile-card .bio { color: #8888aa; font-size: 0.85rem; margin: 4px 0; }
+        .profile-card .username { font-size: 1.1rem; font-weight: 700; }
+        .profile-card .bio { color: #8888aa; font-size: 0.8rem; margin: 4px 0; }
         .profile-card .status-badge {
             display: inline-block;
-            padding: 4px 16px;
+            padding: 4px 14px;
             border-radius: 20px;
             font-size: 0.7rem;
             font-weight: 600;
@@ -543,34 +534,22 @@
         .profile-card .stats {
             display: flex;
             justify-content: center;
-            gap: 30px;
-            margin-top: 15px;
-            padding-top: 15px;
+            gap: 25px;
+            margin-top: 12px;
+            padding-top: 12px;
             border-top: 1px solid #2a1a4a;
         }
-        .profile-card .stats .num {
-            font-weight: 700;
-            color: #ff2d75;
-            font-size: 1.1rem;
-        }
-        .profile-card .stats .label {
-            color: #8888aa;
-            font-size: 0.65rem;
-        }
+        .profile-card .stats .num { font-weight: 700; color: #ff2d75; font-size: 1rem; }
+        .profile-card .stats .label { color: #8888aa; font-size: 0.6rem; }
 
-        /* ====== RESPONSIVE ====== */
         @media (max-width: 600px) {
-            .login-box { padding: 30px 20px; }
-            .login-box h1 { font-size: 1.6rem; }
-            .header .logo { font-size: 1.1rem; }
-            .tabs .tab-btn { padding: 6px 10px; font-size: 0.6rem; }
+            .login-box { padding: 25px 18px; }
+            .login-box h1 { font-size: 1.5rem; }
+            .header .logo { font-size: 1rem; }
+            .tabs .tab-btn { padding: 5px 8px; font-size: 0.55rem; }
             .post-card { padding: 12px; }
-            .chat-container { height: 350px; }
-            .countdown-card .big-number { font-size: 2.8rem; }
-        }
-        @media (max-width: 400px) {
-            .tabs .tab-btn { padding: 4px 8px; font-size: 0.5rem; }
-            .header .user-info .name { font-size: 0.7rem; max-width: 60px; overflow: hidden; text-overflow: ellipsis; }
+            .chat-container { height: 320px; }
+            .countdown-card .big-number { font-size: 2.4rem; }
         }
     </style>
 </head>
@@ -581,13 +560,27 @@
         <div class="login-box">
             <div class="logo">📖</div>
             <h1>Nhật Ký</h1>
-            <p>💕 Lưu giữ những khoảnh khắc</p>
+            <p class="sub">💕 Lưu giữ những khoảnh khắc</p>
             
+            <!-- FORM ĐĂNG NHẬP -->
             <div id="loginForm">
                 <input type="text" id="loginUsername" placeholder="👤 Tên đăng nhập">
-                <input type="password" id="loginPass" placeholder="🔑 Mật khẩu">
-                <div class="error-msg" id="loginError"></div>
-                <button class="btn btn-primary" onclick="login()">Đăng Nhập</button>
+                <div id="loginMsg" class="msg"></div>
+                <button class="btn-login" onclick="handleLogin()">🔑 Đăng Nhập</button>
+                <div class="toggle-text">
+                    Chưa có tài khoản? <span onclick="showRegister()">Tạo tài khoản mới</span>
+                </div>
+            </div>
+            
+            <!-- FORM ĐĂNG KÝ -->
+            <div id="registerForm" style="display:none;">
+                <input type="text" id="regUsername" placeholder="👤 Tên đăng nhập (VD: DuyAh)">
+                <input type="text" id="regName" placeholder="📛 Tên hiển thị (VD: DuyAh)">
+                <div id="registerMsg" class="msg"></div>
+                <button class="btn-login" onclick="handleRegister()">📝 Đăng Ký</button>
+                <div class="toggle-text">
+                    Đã có tài khoản? <span onclick="showLogin()">Đăng nhập</span>
+                </div>
             </div>
         </div>
     </div>
@@ -595,442 +588,556 @@
     <!-- ====== MAIN APP ====== -->
     <div class="app" id="mainApp">
 
-        <!-- HEADER -->
         <div class="header">
             <div class="logo">📖 Nhật Ký</div>
             <div class="user-info">
                 <div class="avatar" id="userAvatar">A</div>
                 <span class="name" id="userName">User</span>
-                <button class="logout-btn" onclick="logout()">🚪</button>
+                <button class="logout-btn" onclick="handleLogout()">🚪</button>
             </div>
         </div>
 
-        <!-- TABS -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="feed" onclick="switchTab('feed')"><i class="fas fa-home"></i> Feed</button>
             <button class="tab-btn" data-tab="create" onclick="switchTab('create')"><i class="fas fa-pen"></i> Viết</button>
-            <button class="tab-btn" data-tab="chat" onclick="switchTab('chat')"><i cla        }
-
-        .card-auth {
-            background: var(--glass); backdrop-filter: blur(25px);
-            padding: 3rem 2rem; border-radius: 2rem; width: 100%; max-width: 400px;
-            box-shadow: 0 25px 60px -15px rgba(124, 58, 237, 0.2);
-            border: 1px solid var(--border); text-align: center;
-        }
-
-        .title-gradient {
-            font-size: 2.2rem; font-weight: 800;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0.5rem 0;
-        }
-
-        .input-style {
-            width: 100%; padding: 0.95rem 1.25rem; border: 2px solid #e2e8f0;
-            border-radius: 1rem; margin-bottom: 1.25rem; outline: none; font-size: 1rem;
-            background: rgba(255, 255, 255, 0.7); color: var(--text); font-weight: 500;
-        }
-        .input-style:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1); }
-
-        .btn-primary {
-            width: 100%; padding: 1rem;
-            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%) !important;
-            color: white !important; border: none; border-radius: 1rem; font-weight: 800; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35); }
-
-        /* Hộp thông báo đen tròn bo góc Glassmorphism siêu sang */
-        .toast-box {
-            position: fixed; top: 2rem; left: 50%; transform: translateX(-50%) translateY(-20px);
-            background: rgba(15, 23, 42, 0.9); color: white; padding: 1rem 2rem;
-            border-radius: 9999px; font-weight: 700; font-size: 0.95rem; z-index: 9999;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 0.5rem;
-            opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .toast-box.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        .dashboard-container { width: 100%; min-height: 100vh; background: #f8fafc; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; }
-        
-        nav {
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px);
-            padding: 1.2rem 2.5rem; display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 30px rgba(0,0,0,0.02);
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .grid-layout {
-            display: grid; grid-template-columns: 1fr; gap: 2rem;
-            max-width: 1100px; width: 100%; margin: 2rem auto; padding: 0 1.25rem;
-        }
-        @media (min-width: 1024px) { .grid-layout { grid-template-columns: 2.8fr 1.2fr; } }
-
-        .main-card { background: white; padding: 2rem; border-radius: 1.5rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01); }
-        .diary-card { background: white; padding: 1.75rem; border-radius: 1.5rem; border: 1px solid #e2e8f0; margin-bottom: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
-        .author-tag { font-weight: 800; color: var(--primary); cursor: pointer; font-size: 1.05rem; }
-        .author-tag:hover { text-decoration: underline; color: var(--secondary); }
-
-        .btn-action {
-            background: #f1f5f9; color: #475569; border: none; padding: 0.6rem 1.2rem;
-            border-radius: 0.75rem; font-weight: 700; cursor: pointer; font-size: 0.9rem;
-            display: inline-flex; align-items: center; gap: 0.5rem;
-        }
-        .btn-action:hover { background: #e2e8f0; color: #1e293b; }
-        .btn-action.liked { background: #fff1f2; color: #f43f5e; border: 1px solid #ffe4e6; }
-
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: white; width: 90%; max-width: 650px; max-height: 85vh; border-radius: 2rem; padding: 2.5rem; overflow-y: auto; position: relative; box-shadow: 0 40px 80px rgba(15, 23, 42, 0.15); border: 1px solid #f1f5f9; }
-        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 1.5rem; cursor: pointer; border: none; background: none; color: #94a3b8; }
-        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px dashed #e2e8f0; }
-    </style>
-</head>
-<body>
-
-    <!-- 🔔 HỘP THÔNG BÁO HIỆN ĐẠI TỰ ĐỘNG BIẾN MẤT -->
-    <div id="customToast" class="toast-box">✨ <span id="toastMessage">Thông báo</span></div>
-
-    <!-- 🔑 GIAO DIỆN ĐĂNG NHẬP -->
-    <div id="loginPage" class="auth-wrapper">
-        <div class="card-auth">
-            <span style="font-size: 3.5rem; display: block; margin-bottom: 0.5rem;">🔮</span>
-            <h2 class="title-gradient">Nhật Ký Online</h2>
-            <p style="color: #6b7280; font-size: 0.95rem; margin-bottom: 2.5rem;">Mạng xã hội đám mây toàn cầu</p>
-            <form onsubmit="handleLogin(event)">
-                <input type="text" id="loginUser" required placeholder="Tên tài khoản..." class="input-style">
-                <input type="password" id="loginPass" required placeholder="Mật khẩu của bạn..." class="input-style">
-                <button type="submit" id="loginBtn" class="btn-primary">Đăng Nhập</button>
-            </form>
-            <p style="margin-top: 2rem; font-size: 0.9rem; color: #4b5563;">Chưa có tài khoản? <button type="button" onclick="switchPage('registerPage')" style="background:none; border:none; color:var(--primary); font-weight:700; cursor:pointer; text-decoration:underline;">Tạo tài khoản mới</button></p>
+            <button class="tab-btn" data-tab="chat" onclick="switchTab('chat')"><i class="fas fa-comment"></i> Chat</button>
+            <button class="tab-btn" data-tab="countdown" onclick="switchTab('countdown')"><i class="fas fa-calendar-heart"></i> Ngày</button>
+            <button class="tab-btn" data-tab="profile" onclick="switchTab('profile')"><i class="fas fa-user"></i></button>
         </div>
-    </div>
 
-    <!-- 📝 GIAO DIỆN ĐĂNG KÝ -->
-    <div id="registerPage" class="auth-wrapper hidden">
-        <div class="card-auth">
-            <span style="font-size: 3.5rem; display: block; margin-bottom: 0.5rem;">📝</span>
-            <h2 class="title-gradient">Tạo Tài Khoản</h2>
-            <p style="color: #6b7280; font-size: 0.95rem; margin-bottom: 2.5rem;">Đăng ký để đồng bộ dữ liệu ngay lập tức</p>
-            <form onsubmit="handleRegister(event)">
-                <input type="text" id="regUser" mountaineer required placeholder="Tên tài khoản viết liền..." class="input-style">
-                <input type="password" id="regPass" required placeholder="Mật khẩu từ 4 ký tự..." class="input-style">
-                <button type="submit" id="regBtn" class="btn-primary">Đăng Ký Tài Khoản</button>
-            </form>
-            <p style="margin-top: 2rem; font-size: 0.9rem; color: #4b5563;">Đã có tài khoản rồi? <button type="button" onclick="switchPage('loginPage')" style="background:none; border:none; color:var(--primary); font-weight:700; cursor:pointer; text-decoration:underline;">Quay lại đăng nhập</button></p>
-        </div>
-    </div>
-
-    <!-- 🔮 BẢNG ĐIỀU KHIỂN CHÍNH (DASHBOARD) -->
-    <div id="dashboardPage" class="hidden dashboard-container">
-        <nav>
-            <div style="display: flex; align-items: center; gap: 0.5rem; cursor:pointer;" onclick="location.reload()">
-                <span style="font-size: 1.8rem;">🔮</span>
-                <span style="font-weight: 900; font-size: 1.4rem; color: var(--primary);">NhậtKýOnline</span>
-            </div>
-            <div style="display: flex; gap: 1.25rem; align-items: center;">
-                <p id="myProfileBtn" onclick="viewProfile(currentUser)" style="font-weight: 700; color: #1e293b; margin: 0; background: #f1f5f9; padding: 0.5rem 1.25rem; border-radius: 9999px; cursor: pointer; border: 1px solid #e2e8f0;">@user</p>
-                <button type="button" onclick="handleLogout()" style="background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; padding: 0.5rem 1.25rem; border-radius: 0.75rem; font-weight:700; cursor:pointer;">Đăng Xuất</button>
-            </div>
-        </nav>
-
-        <div class="grid-layout">
-            <div>
-                <div class="main-card" style="margin-bottom: 2rem;">
-                    <h3 style="margin-top: 0; color: #1e293b; font-weight: 800;">Hôm nay bạn thế nào? ✨</h3>
-                    <form onsubmit="handlePost(event)">
-                        <textarea id="diaryContent" required placeholder="Ghi lại suy nghĩ của bạn để chia sẻ với mọi người..." class="input-style" style="height: 110px; resize: none; font-family: inherit; line-height: 1.5;"></textarea>
-                        <button type="submit" class="btn-primary" style="width: auto; padding: 0.7rem 2.5rem; float: right;">Đăng Nhật Ký</button>
-                        <div style="clear: both;"></div>
-                    </form>
-                </div>
-                <h3 style="color: #475569; margin-left: 0.25rem; font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem;">📖 Nhật ký chung từ mọi người</h3>
-                <div id="allDiariesFeed"></div>
-            </div>
-
-            <div>
-                <div class="main-card" style="margin-bottom: 1.5rem;">
-                    <h4 style="margin-top: 0; margin-bottom: 0.75rem; color: #1e293b;">🔍 Tìm kiếm bạn bè</h4>
-                    <input type="text" id="searchUserInput" oninput="handleSearchUser()" placeholder="Nhập tên tài khoản..." class="input-style" style="margin-bottom: 0; padding: 0.6rem 1rem; font-size: 0.9rem;">
-                </div>
-                <div class="main-card">
-                    <h3 style="margin-top: 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.75rem; font-weight: 800; color: #1e293b;">🌐 Khám phá bạn bè</h3>
-                    <div id="allUsersList"></div>
+        <div class="tab-content active" id="tab-feed">
+            <div class="feed" id="feedContainer">
+                <div style="text-align:center;color:#8888aa;padding:30px;font-size:0.8rem;">
+                    <i class="fas fa-spinner fa-spin" style="font-size:1.5rem;"></i>
+                    <p>Đang tải bài viết...</p>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- 👤 MODAL XEM TRANG CÁ NHÂN -->
-    <div id="profileModal" class="modal hidden">
-        <div class="modal-content">
-            <button type="button" class="close-btn" onclick="closeProfile()">✕</button>
-            <div style="text-align: center; margin-bottom: 2rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 1.5rem;">
-                <div style="font-size: 4.5rem; margin-bottom: 0.5rem;">👤</div>
-                <h2 id="profileName" style="margin: 0; color: var(--primary); font-weight: 800;">@username</h2>
-                <p id="profileStatus" style="color: #64748b; font-weight: 600; font-size: 0.95rem; margin: 0.35rem 0 0 0;"></p>
-                <div id="profileActionArea" style="margin-top: 1rem;"></div>
+        <div class="tab-content" id="tab-create">
+            <div class="create-post">
+                <h3 style="font-size:0.9rem;margin-bottom:10px;">
+                    <i class="fas fa-pen" style="color:#ff2d75;"></i> Viết điều gì đó...
+                </h3>
+                <textarea id="postContent" placeholder="Hôm nay bạn thế nào? Hãy chia sẻ nhé... 💕"></textarea>
+                <div class="options">
+                    <select id="postEmotion">
+                        <option value="😊 Vui vẻ">😊 Vui vẻ</option>
+                        <option value="🥰 Hạnh phúc">🥰 Hạnh phúc</option>
+                        <option value="😢 Buồn">😢 Buồn</option>
+                        <option value="😡 Tức giận">😡 Tức giận</option>
+                        <option value="😌 Bình yên">😌 Bình yên</option>
+                        <option value="🤔 Suy tư">🤔 Suy tư</option>
+                        <option value="💕 Nhớ">💕 Nhớ</option>
+                        <option value="😴 Mệt">😴 Mệt</option>
+                    </select>
+                </div>
+                <div class="actions">
+                    <button class="btn-sm btn-pink" onclick="createPost()"><i class="fas fa-paper-plane"></i> Đăng</button>
+                    <button class="btn-sm btn-outline" onclick="document.getElementById('postContent').value=''"><i class="fas fa-eraser"></i> Xóa</button>
+                </div>
             </div>
-            <h3 id="profileFeedTitle" style="color: #1e293b; margin-bottom: 1.25rem; font-weight: 800;">📝 Dòng thời gian:</h3>
-            <div id="profileDiariesList"></div>
         </div>
+
+        <div class="tab-content" id="tab-chat">
+            <div class="chat-container">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <span style="font-weight:600;font-size:0.8rem;"><i class="fas fa-comment-dots" style="color:#ff2d75;"></i> 💬 Chat</span>
+                    <span style="font-size:0.6rem;color:#22c55e;">● Đang online</span>
+                </div>
+                <div class="messages" id="chatMessages">
+                    <div style="text-align:center;color:#8888aa;padding:20px;font-size:0.8rem;">
+                        <i class="fas fa-spinner fa-spin"></i> Đang tải tin nhắn...
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Nhắn tin... 💕" onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-countdown">
+            <div class="countdown-card">
+                <div class="heart-icon">💕</div>
+                <div class="big-number" id="dayCount">0</div>
+                <div class="label">Ngày bên nhau</div>
+                <div style="margin-top:6px;color:#8888aa;font-size:0.75rem;">
+                    🌸 Từ ngày <span id="startDate">01/06/2025</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-profile">
+            <div class="profile-card" id="profileCard">
+                <div class="big-avatar" id="profileAvatar">A</div>
+                <div class="username" id="profileName">User</div>
+                <div class="bio" id="profileBio">📝 Viết nhật ký mỗi ngày...</div>
+                <div class="status-badge">💕 Đang tìm hiểu</div>
+                <div class="stats">
+                    <div>
+                        <div class="num" id="profilePosts">0</div>
+                        <div class="label">Bài viết</div>
+                    </div>
+                    <div>
+                        <div class="num" id="profileHearts">0</div>
+                        <div class="label">Lượt tim</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- ================= THUẬT TOÁN ĐĂNG NHẬP SIÊU TỐC KHÔNG CHẶN ================= -->
     <script>
+        // ====== FIREBASE ======
         const firebaseConfig = {
-            databaseURL: "https://firebasedatabase.app"
+            apiKey: "AIzaSyAOcavYOsOGgRnmfPKeojppLoP6hPYe6pI",
+            authDomain: "shopcuttay.firebaseapp.com",
+            databaseURL: "https://shopcuttay-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "shopcuttay",
+            storageBucket: "shopcuttay.firebasestorage.app",
+            messagingSenderId: "275809822981",
+            appId: "1:275809822981:web:02e33ad2515eed78b32f6c"
         };
-        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let currentUser = localStorage.getItem('online_diary_user') || null;
-        let globalUsersCache = {};
-        let globalFriendsList = [];
+        let currentUser = null;
+        let currentUserData = null;
 
-        window.onload = function() {
-            // Tải dữ liệu bộ nhớ đệm ẩn trước để hỗ trợ login nhanh 0.5 giây
-            db.ref('users').once('value', snapshot => { globalUsersCache = snapshot.val() || {}; });
-            if (currentUser) { showDashboard(); } else { switchPage('loginPage'); }
-        };
-
-        function showToast(msg) {
-            const toast = document.getElementById('customToast');
-            document.getElementById('toastMessage').innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 2000);
+        // ====== HIỂN THỊ THÔNG BÁO ======
+        function showMsg(id, text, type) {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.className = 'msg ' + type;
         }
 
-        function switchPage(id) {
-            document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('registerPage').classList.add('hidden');
-            document.getElementById('dashboardPage').classList.add('hidden');
-            document.getElementById(id).classList.remove('hidden');
-            
-            if(id === 'dashboardPage') {
-                document.body.style.alignItems = 'stretch'; document.body.style.justifyContent = 'flex-start';
-            } else {
-                document.body.style.alignItems = 'center'; document.body.style.justifyContent = 'center';
+        function hideMsg(id) {
+            document.getElementById(id).className = 'msg';
+        }
+
+        // ====== CHUYỂN FORM ======
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            hideMsg('loginMsg');
+            hideMsg('registerMsg');
+        }
+
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            hideMsg('loginMsg');
+            hideMsg('registerMsg');
+        }
+
+        // ====== ĐĂNG KÝ ======
+        function handleRegister() {
+            hideMsg('registerMsg');
+
+            const username = document.getElementById('regUsername').value.trim();
+            const name = document.getElementById('regName').value.trim();
+
+            if (!username) {
+                showMsg('registerMsg', '⚠️ Vui lòng nhập tên đăng nhập!', 'error');
+                return;
             }
-        }
-
-        // BẢN VÁ LỖI PHÁT ĂN NGAY: Không vô hiệu hóa nút bấm, đẩy dữ liệu song song cực nhanh
-        function handleRegister(e) {
-            e.preventDefault();
-            const user = document.getElementById('regUser').value.trim().toLowerCase().replace(/[^a-zA-Z0-9_]/g, '');
-            const pass = document.getElementById('regPass').value;
-
-            if(user.length < 3 || pass.length < 4) { showToast('Tên tài khoản tối thiểu 3 ký tự, mật khẩu từ 4 ký tự!'); return; }
-
-            // Lưu thẳng trạng thái vào bộ nhớ máy để chuyển màn hình tức thì sau 0.5 giây
-            currentUser = user;
-            localStorage.setItem('online_diary_user', currentUser);
-            showToast('🎉 Đăng ký siêu tốc thành công!');
-            
-            // Đồng bộ đẩy luồng ngầm lên mây cực nhanh
-            db.ref('users/' + user).set({ password: pass, username: user });
-            setTimeout(() => { showDashboard(); }, 600);
-        }
-
-        // BẢN VÁ LỖI ĐĂNG NHẬP: Nhận diện dữ liệu qua cache cục bộ, đăng nhập tức thì không kẹt nút
-        function handleLogin(e) {
-            e.preventDefault();
-            const user = document.getElementById('loginUser').value.trim().toLowerCase();
-            const pass = document.getElementById('loginPass').value;
-
-            // Kiểm tra bộ đệm cache đã tải từ window.onload trước đó (Tốc độ 0.1 giây)
-            if (globalUsersCache[user] && globalUsersCache[user].password === pass) {
-                currentUser = user;
-                localStorage.setItem('online_diary_user', currentUser);
-                showToast('🔑 Đăng nhập thành công!');
-                setTimeout(() => { showDashboard(); }, 600);
+            if (username.length < 2) {
+                showMsg('registerMsg', '⚠️ Tên tối thiểu 2 ký tự!', 'error');
+                return;
+            }
+            if (!name) {
+                showMsg('registerMsg', '⚠️ Vui lòng nhập tên hiển thị!', 'error');
                 return;
             }
 
-            // Fallback gửi lệnh trực tiếp lên mạng nếu cache chưa kịp tải
-            db.ref('users/' + user).once('value').then(snapshot => {
-                if(snapshot.exists() && snapshot.val().password === pass) {
-                    currentUser = user;
-                    localStorage.setItem('online_diary_user', currentUser);
-                    showToast('🔑 Đăng nhập thành công!');
-                    setTimeout(() => { showDashboard(); }, 600);
-                } else {
-                    showToast('❌ Sai tên tài khoản hoặc mật khẩu!');
+            // Kiểm tra tên đã tồn tại chưa
+            db.ref('users/' + username).once('value').then(snap => {
+                if (snap.exists()) {
+                    showMsg('registerMsg', '❌ Tên này đã được đăng ký!', 'error');
+                    return;
                 }
-            }).catch(() => {
-                // Ép buộc cho vào chế độ offline nếu cáp quang biển lỗi hoàn toàn
-                currentUser = user;
-                localStorage.setItem('online_diary_user', currentUser);
-                showDashboard();
+
+                // Tạo tài khoản mới
+                const newUser = {
+                    name: name,
+                    avatar: name.charAt(0).toUpperCase(),
+                    bio: '📝 Viết nhật ký mỗi ngày...',
+                    created_at: new Date().toISOString()
+                };
+
+                db.ref('users/' + username).set(newUser).then(() => {
+                    showMsg('registerMsg', '✅ Đăng ký thành công!', 'success');
+                    
+                    document.getElementById('regUsername').value = '';
+                    document.getElementById('regName').value = '';
+
+                    // Tự động đăng nhập sau 1s
+                    setTimeout(() => {
+                        currentUser = username;
+                        currentUserData = newUser;
+                        localStorage.setItem('nhatky_user', currentUser);
+                        
+                        document.getElementById('loginScreen').classList.add('hidden');
+                        document.getElementById('mainApp').classList.add('active');
+                        updateUI();
+                        loadFeed();
+                        loadChat();
+                        loadCountdown();
+                        loadProfileStats();
+                    }, 1000);
+                }).catch(err => {
+                    showMsg('registerMsg', '❌ Lỗi: ' + err.message, 'error');
+                });
+            }).catch(err => {
+                showMsg('registerMsg', '❌ Lỗi: ' + err.message, 'error');
             });
         }
 
-        function showDashboard() {
-            switchPage('dashboardPage');
-            document.getElementById('myProfileBtn').innerText = `@${currentUser}`;
-            
-            db.ref('diaries').on('value', snapshot => { renderAllDiaries(snapshot.val()); });
-            db.ref('users').on('value', snapshot => {
-                globalUsersCache = snapshot.val() || {};
-                renderUsersList(globalUsersCache);
-            });
-            db.ref('friends/' + currentUser).on('value', snapshot => {
-                globalFriendsList = [];
-                if(snapshot.exists()){ globalFriendsList = Object.keys(snapshot.val()); }
-                renderUsersList(globalUsersCache);
+        // ====== ĐĂNG NHẬP ======
+        function handleLogin() {
+            hideMsg('loginMsg');
+
+            const username = document.getElementById('loginUsername').value.trim();
+
+            if (!username) {
+                showMsg('loginMsg', '⚠️ Vui lòng nhập tên đăng nhập!', 'error');
+                return;
+            }
+
+            db.ref('users/' + username).once('value').then(snap => {
+                if (!snap.exists()) {
+                    showMsg('loginMsg', '❌ Tên không tồn tại! Hãy đăng ký.', 'error');
+                    return;
+                }
+
+                currentUser = username;
+                currentUserData = snap.val();
+                localStorage.setItem('nhatky_user', currentUser);
+
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.add('active');
+                updateUI();
+                loadFeed();
+                loadChat();
+                loadCountdown();
+                loadProfileStats();
+            }).catch(err => {
+                showMsg('loginMsg', '❌ Lỗi: ' + err.message, 'error');
             });
         }
 
+        // ====== ĐĂNG XUẤT ======
         function handleLogout() {
+            localStorage.removeItem('nhatky_user');
+            document.getElementById('mainApp').classList.remove('active');
+            document.getElementById('loginScreen').classList.remove('hidden');
             currentUser = null;
-            localStorage.removeItem('online_diary_user');
-            switchPage('loginPage');
+            currentUserData = null;
+            document.getElementById('loginUsername').value = '';
         }
 
-        function handlePost(e) {
-            e.preventDefault();
-            const text = document.getElementById('diaryContent').value.trim();
-            if(!text) return;
+        // ====== CẬP NHẬT UI ======
+        function updateUI() {
+            if (!currentUserData) return;
+            const displayName = currentUserData.name || currentUser;
+            document.getElementById('userName').textContent = displayName;
+            document.getElementById('userAvatar').textContent = currentUserData.avatar || currentUser.charAt(0).toUpperCase();
+            document.getElementById('profileName').textContent = displayName;
+            document.getElementById('profileAvatar').textContent = currentUserData.avatar || currentUser.charAt(0).toUpperCase();
+            document.getElementById('profileBio').textContent = currentUserData.bio || '📝 Viết nhật ký mỗi ngày...';
+        }
 
-            const newDiaryRef = db.ref('diaries').push();
-            newDiaryRef.set({
-                id: newDiaryRef.key,
-                author: currentUser,
-                content: text,
-                timestamp: Date.now(),
-                likesCount: 0
+        // ====== SWITCH TAB ======
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.querySelector(`.tab-btn[data-tab="${tab}"]`)?.classList.add('active');
+        }
+
+        // ====== CREATE POST ======
+        function createPost() {
+            if (!currentUser) {
+                alert('⚠️ Vui lòng đăng nhập!');
+                return;
+            }
+            const content = document.getElementById('postContent').value.trim();
+            const emotion = document.getElementById('postEmotion').value;
+            if (!content) { alert('⚠️ Viết gì đó đi!'); return; }
+
+            db.ref('posts').push({
+                uid: currentUser,
+                name: currentUserData.name || currentUser,
+                avatar: currentUserData.avatar || currentUser.charAt(0).toUpperCase(),
+                content: content,
+                emotion: emotion,
+                created_at: new Date().toISOString(),
+                likes: 0,
+                comments: 0
+            }).then(() => {
+                document.getElementById('postContent').value = '';
+                alert('✅ Đã đăng!');
+                switchTab('feed');
+                loadFeed();
             });
-            document.getElementById('diaryContent').value = '';
-            showToast('📝 Đã đăng nhật ký công khai!');
         }
 
-        function toggleLike(diaryId) {
-            const likeRef = db.ref(`diaries/${diaryId}/likedBy/${currentUser}`);
-            const countRef = db.ref(`diaries/${diaryId}/likesCount`);
+        // ====== LOAD FEED ======
+        function loadFeed() {
+            const container = document.getElementById('feedContainer');
+            db.ref('posts').orderByChild('created_at').limitToLast(50).on('value', snap => {
+                const posts = [];
+                snap.forEach(child => { const d = child.val(); d.id = child.key; posts.push(d); });
+                posts.reverse();
 
-            likeRef.once('value', snapshot => {
-                if (snapshot.exists()) {
+                if (!posts.length) {
+                    container.innerHTML = `<div style="text-align:center;color:#8888aa;padding:30px;font-size:0.8rem;">
+                        <i class="fas fa-book-open" style="font-size:2rem;display:block;margin-bottom:8px;"></i>
+                        <p>Chưa có bài viết nào! 💕</p>
+                    </div>`;
+                    return;
+                }
+
+                let html = '';
+                posts.forEach(p => {
+                    const time = new Date(p.created_at).toLocaleString('vi-VN');
+                    const isOwner = p.uid === currentUser;
+                    html += `
+                        <div class="post-card" id="post-${p.id}">
+                            <div class="post-header">
+                                <div class="avatar">${p.avatar || 'U'}</div>
+                                <div class="info">
+                                    <div class="name">${p.name || 'Unknown'}</div>
+                                    <div class="time">${time}</div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                ${p.emotion ? `<span class="emotion">${p.emotion}</span>` : ''}
+                                <div class="text">${p.content}</div>
+                            </div>
+                            <div class="post-actions">
+                                <button onclick="likePost('${p.id}')" id="like-btn-${p.id}">
+                                    <i class="fas fa-heart"></i> <span id="like-${p.id}">${p.likes || 0}</span>
+                                </button>
+                                <button onclick="toggleComments('${p.id}')">
+                                    <i class="fas fa-comment"></i> <span id="comment-count-${p.id}">${p.comments || 0}</span>
+                                </button>
+                                ${isOwner ? `<button onclick="deletePost('${p.id}')" style="color:#ef4444;"><i class="fas fa-trash"></i></button>` : ''}
+                            </div>
+                            <div class="comments" id="comments-${p.id}" style="display:none;">
+                                <div id="comment-list-${p.id}"></div>
+                                <div class="comment-input">
+                                    <input type="text" id="comment-input-${p.id}" placeholder="Viết bình luận..." onkeypress="if(event.key==='Enter') addComment('${p.id}')">
+                                    <button onclick="addComment('${p.id}')">Gửi</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+                posts.forEach(p => {
+                    if (currentUser) {
+                        db.ref('likes/' + p.id + '/' + currentUser).once('value', snap => {
+                            if (snap.exists()) document.getElementById('like-btn-' + p.id)?.classList.add('liked');
+                        });
+                    }
+                });
+            });
+        }
+
+        // ====== LIKE ======
+        function likePost(postId) {
+            if (!currentUser) return;
+            const likeRef = db.ref('likes/' + postId + '/' + currentUser);
+            likeRef.once('value').then(snap => {
+                if (snap.exists()) {
                     likeRef.remove();
-                    countRef.transaction(currentCount => (currentCount || 1) - 1);
+                    db.ref('posts/' + postId + '/likes').transaction(v => (v || 0) - 1);
+                    document.getElementById('like-btn-' + postId)?.classList.remove('liked');
                 } else {
                     likeRef.set(true);
-                    countRef.transaction(currentCount => (currentCount || 0) + 1);
+                    db.ref('posts/' + postId + '/likes').transaction(v => (v || 0) + 1);
+                    document.getElementById('like-btn-' + postId)?.classList.add('liked');
                 }
             });
         }
 
-        function renderAllDiaries(data) {
-            const feed = document.getElementById('allDiariesFeed');
-            feed.innerHTML = '';
-            if(!data) { feed.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:2.5rem;">Không gian nhật ký trống.</p>'; return; }
-
-            const list = Object.values(data).sort((a,b) => b.timestamp - a.timestamp);
-            list.forEach(item => {
-                const isLiked = item.likedBy && item.likedBy[currentUser];
-                const card = document.createElement('div');
-                card.className = 'diary-card';
-                card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem; align-items:center;">
-                        <span class="author-tag" onclick="viewProfile('${item.author}')">@${item.author} ${item.author === currentUser ? '(Bạn)' : ''}</span>
-                        <span style="font-size:0.8rem; color:#94a3b8; font-weight:600;">${new Date(item.timestamp).toLocaleDateString('vi-VN')}</span>
-                    </div>
-                    <p style="color:#334155; line-height:1.6; margin:0 0 1rem 0; white-space:pre-wrap;">${item.content}</p>
-                    <button type="button" class="btn-action ${isLiked ? 'liked' : ''}" onclick="toggleLike('${item.id}')">❤️ Thích (${item.likesCount || 0})</button>
-                `;
-                feed.appendChild(card);
-            });
-        }
-
-        function renderUsersList(users, filterText = '') {
-            const container = document.getElementById('allUsersList');
-            container.innerHTML = '';
-            if(!users) return;
-
-            Object.keys(users).forEach(username => {
-                if(filterText && !username.includes(filterText)) return;
-
-                const isFriend = globalFriendsList.includes(username);
-                const div = document.createElement('div');
-                div.className = 'user-item';
-                div.innerHTML = `
-                    <span style="font-weight:700; color:#475569; cursor:pointer;" class="author-tag" onclick="viewProfile('${username}')">@${username}</span>
-                    ${username !== currentUser ? `
-                        <button type="button" class="btn-action" style="font-size:0.8rem; padding:0.4rem 0.8rem; background:${isFriend ? '#f0fdf4' : '#eff6ff'}; color:${isFriend ? '#16a34a' : '#2563eb'}; border: 1px solid ${isFriend ? '#bbf7d0' : '#dbeafe'};" onclick="toggleFriend('${username}')">
-                            ${isFriend ? '✓ Bạn bè' : '+ Kết bạn'}
-                        </button>
-                    ` : `<span style="font-size:0.8rem; color:#94a3b8; font-weight:700;">Bạn</span>`}
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function handleSearchUser() {
-            const text = document.getElementById('searchUserInput').value.trim().toLowerCase();
-            renderUsersList(globalUsersCache, text);
-        }
-
-        function toggleFriend(targetUser) {
-            const myFriendRef = db.ref(`friends/${currentUser}/${targetUser}`);
-            const targetFriendRef = db.ref(`friends/${targetUser}/${currentUser}`);
-
-            if (globalFriendsList.includes(targetUser)) {
-                myFriendRef.remove(); targetFriendRef.remove();
-                showToast(`Đã hủy kết bạn với @${targetUser}`);
+        // ====== COMMENTS ======
+        function toggleComments(postId) {
+            const el = document.getElementById('comments-' + postId);
+            if (el.style.display === 'none') {
+                el.style.display = 'block';
+                loadComments(postId);
             } else {
-                myFriendRef.set(true); targetFriendRef.set(true);
-                showToast(`🎉 Đã kết bạn với @${targetUser}!`);
+                el.style.display = 'none';
             }
         }
 
-        function viewProfile(username) {
-            document.getElementById('profileName').innerText = `@${username}`;
-            const actionArea = document.getElementById('profileActionArea');
-            actionArea.innerHTML = '';
+        function loadComments(postId) {
+            const container = document.getElementById('comment-list-' + postId);
+            db.ref('comments/' + postId).orderByChild('created_at').on('value', snap => {
+                const comments = [];
+                snap.forEach(child => { const d = child.val(); d.id = child.key; comments.push(d); });
+                if (!comments.length) {
+                    container.innerHTML = '<div style="color:#8888aa;font-size:0.75rem;padding:6px 0;">Chưa có bình luận.</div>';
+                    return;
+                }
+                let html = '';
+                comments.forEach(c => {
+                    const isOwner = c.uid === currentUser;
+                    html += `
+                        <div class="comment">
+                            <div class="avatar">${c.avatar || 'U'}</div>
+                            <div class="info">
+                                <div class="name">${c.name || 'Unknown'}</div>
+                                <div class="text">${c.content}</div>
+                            </div>
+                            ${isOwner ? `<button onclick="deleteComment('${postId}','${c.id}')" style="background:transparent;border:none;color:#ef4444;cursor:pointer;font-size:0.6rem;"><i class="fas fa-times"></i></button>` : ''}
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
 
-            if(username === currentUser) {
-                document.getElementById('profileStatus').innerText = "✨ Không gian nhật ký cá nhân của bạn";
-                document.getElementById('profileFeedTitle').innerText = "📝 Tất cả các bài viết bạn đã đăng:";
-            } else {
-                document.getElementById('profileStatus').innerText = `👋 Ghé thăm trang nhật ký cá nhân của @${username}`;
-                document.getElementById('profileFeedTitle').innerText = `📝 Các bài nhật ký của @${username}:`;
-                
-                const isFriend = globalFriendsList.includes(username);
-                const btn = document.createElement('button');
-                btn.className = 'btn-primary';
-                btn.style = `width:auto; padding: 0.5rem 2rem; text-transform:none; font-size:0.9rem; background: ${isFriend ? '#16a34a' : 'linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%)'} !important;`;
-                btn.innerText = isFriend ? '✓ Bạn bè (Bấm để hủy)' : '+ Kết bạn ngay';
-                btn.onclick = function() { toggleFriend(username); viewProfile(username); };
-                actionArea.appendChild(btn);
+        function addComment(postId) {
+            if (!currentUser) return;
+            const input = document.getElementById('comment-input-' + postId);
+            const content = input.value.trim();
+            if (!content) return;
+
+            db.ref('comments/' + postId).push({
+                uid: currentUser,
+                name: currentUserData.name || currentUser,
+                avatar: currentUserData.avatar || currentUser.charAt(0).toUpperCase(),
+                content: content,
+                created_at: new Date().toISOString()
+            }).then(() => {
+                input.value = '';
+                db.ref('posts/' + postId + '/comments').transaction(v => (v || 0) + 1);
+                document.getElementById('comment-count-' + postId).textContent =
+                    (parseInt(document.getElementById('comment-count-' + postId).textContent) || 0) + 1;
+            });
+        }
+
+        function deleteComment(postId, commentId) {
+            if (confirm('Xóa bình luận?')) {
+                db.ref('comments/' + postId + '/' + commentId).remove();
+                db.ref('posts/' + postId + '/comments').transaction(v => (v || 0) - 1);
             }
+        }
 
-            db.ref('diaries').once('value', snapshot => {
-                const diaries = snapshot.val();
-                const container = document.getElementById('profileDiariesList');
-                container.innerHTML = '';
+        function deletePost(postId) {
+            if (confirm('Xóa bài viết?')) {
+                db.ref('posts/' + postId).remove();
+                db.ref('comments/' + postId).remove();
+                db.ref('likes/' + postId).remove();
+            }
+        }
 
-                if(!diaries) { container.innerHTML = '<p style="color:#94a3b8; text-align:center;">Tài khoản này chưa viết bài nhật ký nào.</p>'; return; }
+        // ====== CHAT ======
+        function loadChat() {
+            db.ref('messages').orderByChild('created_at').limitToLast(50).on('value', snap => {
+                const msgs = [];
+                snap.forEach(child => { const d = child.val(); d.id = child.key; msgs.push(d); });
+                const container = document.getElementById('chatMessages');
+                if (!msgs.length) {
+                    container.innerHTML = `<div style="text-align:center;color:#8888aa;padding:20px;font-size:0.8rem;">💬 Hãy gửi tin nhắn đầu tiên!</div>`;
+                    return;
+                }
+                let html = '';
+                msgs.forEach(m => {
+                    const isSent = m.uid === currentUser;
+                    const time = new Date(m.created_at).toLocaleString('vi-VN');
+                    html += `
+                        <div class="msg ${isSent ? 'sent' : 'received'}">
+                            ${!isSent ? `<span class="sender">${m.name || 'Unknown'}</span>` : ''}
+                            ${m.content}
+                            <span class="time">${time}</span>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+                container.scrollTop = container.scrollHeight;
+            });
+        }
 
-                const userPosts = Object.values(diaries)
-                                        .filter(post => post.author === username)
-                                        .sort((a,b) => b.timestamp - a.timestamp);
+        function sendMessage() {
+            if (!currentUser) return;
+            const input = document.getElementById('chatInput');
+            const content = input.value.trim();
+            if (!content) return;
 
-                if(userPosts.length === 0) {
-                    container.innerHTML = '<p style="color:#94a3b8; text-align:center;">Chưa đăng câu chuyện nào.</p>';
+            db.ref('messages').push({
+                uid: currentUser,
+                name: currentUserData.name || currentUser,
+                content: content,
+                created_at: new Date().toISOString()
+            }).then(() => { input.value = ''; });
+        }
+
+        // ====== COUNTDOWN ======
+        function loadCountdown() {
+            const startDate = new Date('2025-06-01');
+            const now = new Date();
+            const diff = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+            document.getElementById('dayCount').textContent = diff > 0 ? diff : 0;
+            document.getElementById('startDate').textContent = startDate.toLocaleDateString('vi-VN');
+        }
+
+        // ====== PROFILE STATS ======
+        function loadProfileStats() {
+            if (!currentUser) return;
+            db.ref('posts').on('value', snap => {
+                let count = 0;
+                let hearts = 0;
+                snap.forEach(child => {
+                    const data = child.val();
+                    if (data.uid === currentUser) {
+                        count++;
+                        hearts += data.likes || 0;
+                    }
+                });
+                document.getElementById('profilePosts').textContent = count;
+                document.getElementById('profileHearts').textContent = hearts;
+            });
+        }
+
+        // ====== AUTO LOGIN ======
+        const savedUser = localStorage.getItem('nhatky_user');
+        if (savedUser) {
+            db.ref('users/' + savedUser).once('value').then(snap => {
+                if (snap.exists()) {
+                    currentUser = savedUser;
+                    currentUserData = snap.val();
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('mainApp').classList.add('active');
+                    updateUI();
+                    loadFeed();
+                    loadChat();
+                    loadCountdown();
+                    loadProfileStats();
                 } else {
-                    userPosts.forEach(post => {
-                        const div = document.createElement('div');
-                        div.style = 'background:#f8fafc; border:1px solid #e2e8f0; padding:1.25rem; border-radius:1.25rem; margin-bottom:0.85rem; text-align:left;';
-                        div.innerHTML = `
-                            <p style="font-size:0.8rem; color:#94a3b8; margin:0 0 0.5rem 0; font-weight:600;">Đăng ngày: ${new Date(post.timestamp).toLocaleDateString('vi-VN')} lúc ${new Date(post.timestamp).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}</p>
-                            <p style="margin:0; color:#334155; white-space:pre-wrap; line-height:1.5;">${post.content}</p>
-                        `;
-                        container.appendChild(div);
-                    });
+                    localStorage.removeItem('nhatky_user');
                 }
             });
-
-            document.getElementById('profileModal').classList.remove('hidden');
         }
 
-        function closeProfile() { document.getElementById('profileModal').classList.add('hidden'); }
+        // ====== ENTER KEY ======
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const loginForm = document.getElementById('loginForm');
+                const registerForm = document.getElementById('registerForm');
+                if (loginForm.style.display !== 'none' && !document.getElementById('loginScreen').classList.contains('hidden')) {
+                    handleLogin();
+                } else if (registerForm.style.display !== 'none' && !document.getElementById('loginScreen').classList.contains('hidden')) {
+                    handleRegister();
+                }
+            }
+        });
     </script>
 </body>
 </html>
