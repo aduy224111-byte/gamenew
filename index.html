@@ -1537,42 +1537,71 @@
                 dropdown.classList.remove('show');
             }
         });
-        // ====== CHAT ======
+                // ====== CHAT ======
+        // Lưu danh sách bạn bè
+        let myFriends = {};
+
         function loadChatList() {
-            db.ref('users').once('value', snap => {
-                allUsersCache = snap.val() || {};
-                renderChatList();
+            if (!currentUser) return;
+            // Lấy danh sách bạn bè của currentUser
+            db.ref('friends/' + currentUser).on('value', snap => {
+                myFriends = snap.val() || {};
+                // Lấy thông tin user của những người trong danh sách bạn bè
+                db.ref('users').once('value', usersSnap => {
+                    allUsersCache = usersSnap.val() || {};
+                    renderChatList();
+                });
             });
         }
 
         function renderChatList() {
             const container = document.getElementById('chatList');
-            const users = Object.keys(allUsersCache).filter(u => u !== currentUser);
+            const friendNames = Object.keys(myFriends);
 
-            if (!users.length) {
-                container.innerHTML = '<div style="text-align:center;color:#b39ddb;padding:20px;">🌸 Chưa có bạn bè nào để chat</div>';
+            if (!friendNames.length) {
+                container.innerHTML = `
+                    <div style="text-align:center;color:#b39ddb;padding:30px;">
+                        <i class="fas fa-user-plus" style="font-size:2rem;display:block;margin-bottom:8px;"></i>
+                        <p>🌸 Chưa có bạn bè nào!</p>
+                        <p style="font-size:0.8rem;margin-top:5px;">Hãy tìm và kết bạn để chat nhé 💕</p>
+                        <button class="btn-sm btn-pink" onclick="showFindFriend()" style="margin-top:10px;padding:8px 20px;">
+                            <i class="fas fa-search"></i> Tìm bạn
+                        </button>
+                    </div>
+                `;
                 return;
             }
 
             let html = '';
-            users.forEach(u => {
-                const data = allUsersCache[u];
+            friendNames.forEach(username => {
+                const data = allUsersCache[username];
+                if (!data) return;
                 const colors = data.avatarColors || ['#f06292', '#ce93d8'];
                 const avatarStyle = data.avatarUrl ? `background-image:url(${data.avatarUrl});background-size:cover;background-position:center;` : `background:linear-gradient(135deg, ${colors[0]}, ${colors[1]});`;
+                const displayName = data.name || username;
                 html += `
-                    <div class="chat-user-item" onclick="openChat('${u}')">
-                        <div class="avatar" style="${avatarStyle}">${data.avatar || u.charAt(0).toUpperCase()}</div>
+                    <div class="chat-user-item" onclick="openChat('${username}')">
+                        <div class="avatar" style="${avatarStyle}">${data.avatar || username.charAt(0).toUpperCase()}</div>
                         <div class="info">
-                            <div class="name">${data.name || u}</div>
-                            <div class="last-msg" id="lastMsg-${u}">💬 Nhắn tin...</div>
+                            <div class="name">${displayName}</div>
+                            <div class="last-msg" id="lastMsg-${username}">💬 Nhắn tin...</div>
                         </div>
                     </div>
                 `;
             });
+            
+            // Thêm nút tìm bạn
+            html += `
+                <div style="text-align:center;padding:10px 0;">
+                    <button class="btn-sm btn-pink" onclick="showFindFriend()" style="padding:8px 20px;flex:0 1 auto;">
+                        <i class="fas fa-user-plus"></i> Tìm và kết bạn
+                    </button>
+                </div>
+            `;
             container.innerHTML = html;
 
-            // Lắng nghe tin nhắn mới để cập nhật
-            users.forEach(u => {
+            // Lắng nghe tin nhắn mới
+            friendNames.forEach(u => {
                 const chatId = [currentUser, u].sort().join('_');
                 db.ref('messages/' + chatId).orderByChild('created_at').limitToLast(1).on('value', snap => {
                     const lastMsg = document.getElementById('lastMsg-' + u);
@@ -1586,7 +1615,118 @@
             });
         }
 
+        // ====== TÌM BẠN ======
+        function showFindFriend() {
+            const container = document.getElementById('chatList');
+            container.innerHTML = `
+                <div style="background:rgba(255,255,255,0.9);border-radius:16px;padding:16px;border:1px solid #f8bbd0;margin-bottom:10px;">
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <input type="text" id="searchFriendInput" placeholder="🔍 Nhập tên cần tìm..." 
+                               style="flex:1;padding:10px 16px;border:2px solid #f8bbd0;border-radius:14px;outline:none;font-size:0.9rem;min-width:150px;">
+                        <button class="btn-sm btn-pink" onclick="searchUser()" style="flex:0 1 auto;padding:10px 20px;">
+                            <i class="fas fa-search"></i> Tìm
+                        </button>
+                        <button class="btn-sm btn-outline" onclick="loadChatList()" style="flex:0 1 auto;padding:10px 20px;">
+                            <i class="fas fa-arrow-left"></i> Quay lại
+                        </button>
+                    </div>
+                    <div id="searchResult" style="margin-top:12px;"></div>
+                </div>
+            `;
+            // Cho phép enter để tìm
+            document.getElementById('searchFriendInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') searchUser();
+            });
+        }
+
+        function searchUser() {
+            const keyword = document.getElementById('searchFriendInput').value.trim().toLowerCase();
+            const resultDiv = document.getElementById('searchResult');
+            
+            if (!keyword) {
+                resultDiv.innerHTML = '<div style="color:#b39ddb;text-align:center;padding:10px;">Nhập tên cần tìm nhé! 🔍</div>';
+                return;
+            }
+
+            // Tìm trong tất cả user
+            const users = Object.keys(allUsersCache);
+            let found = [];
+            users.forEach(u => {
+                if (u === currentUser) return;
+                const data = allUsersCache[u];
+                const displayName = (data.name || '').toLowerCase();
+                const username = u.toLowerCase();
+                if (displayName.includes(keyword) || username.includes(keyword)) {
+                    found.push({ username: u, data: data });
+                }
+            });
+
+            if (!found.length) {
+                resultDiv.innerHTML = `<div style="color:#b39ddb;text-align:center;padding:10px;">🔍 Không tìm thấy ai tên "${keyword}"</div>`;
+                return;
+            }
+
+            let html = '<div style="display:flex;flex-direction:column;gap:8px;">';
+            found.forEach(f => {
+                const isFriend = myFriends && myFriends[f.username];
+                const colors = f.data.avatarColors || ['#f06292', '#ce93d8'];
+                const avatarStyle = f.data.avatarUrl ? `background-image:url(${f.data.avatarUrl});background-size:cover;background-position:center;` : `background:linear-gradient(135deg, ${colors[0]}, ${colors[1]});`;
+                html += `
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,255,255,0.8);border-radius:14px;border:1px solid #fce4ec;">
+                        <div class="avatar" style="${avatarStyle}">${f.data.avatar || f.username.charAt(0).toUpperCase()}</div>
+                        <div style="flex:1;">
+                            <div style="font-weight:600;font-size:0.9rem;">${f.data.name || f.username}</div>
+                            <div style="font-size:0.7rem;color:#b39ddb;">@${f.username}</div>
+                        </div>
+                        ${isFriend ? 
+                            `<span style="color:#34d399;font-weight:600;font-size:0.8rem;">✅ Bạn bè</span>` :
+                            `<button class="btn-sm btn-pink" onclick="addFriend('${f.username}')" style="flex:0 1 auto;padding:6px 16px;">
+                                <i class="fas fa-user-plus"></i> Kết bạn
+                            </button>`
+                        }
+                    </div>
+                `;
+            });
+            html += '</div>';
+            resultDiv.innerHTML = html;
+        }
+
+        // ====== KẾT BẠN ======
+        function addFriend(username) {
+            if (!currentUser) return;
+            if (username === currentUser) {
+                showToast('Không thể kết bạn với chính mình! 😅', 'error');
+                return;
+            }
+            
+            // Kiểm tra đã là bạn chưa
+            if (myFriends && myFriends[username]) {
+                showToast('Đã là bạn bè rồi! 💕', 'info');
+                return;
+            }
+
+            // Thêm vào danh sách bạn bè của currentUser
+            db.ref('friends/' + currentUser + '/' + username).set(true).then(() => {
+                // Thêm vào danh sách bạn bè của người kia
+                db.ref('friends/' + username + '/' + currentUser).set(true).then(() => {
+                    showToast(`🎀 Đã kết bạn với ${username}!`, 'success');
+                    loadChatList();
+                });
+            }).catch(err => {
+                showToast('Lỗi: ' + err.message, 'error');
+            });
+        }
+
+        // ====== CHAT RIÊNG ======
         function openChat(username) {
+            // Kiểm tra đã kết bạn chưa
+            if (!myFriends || !myFriends[username]) {
+                showToast('⚠️ Hãy kết bạn trước khi chat nhé!', 'error');
+                // Hiện lại danh sách bạn bè
+                loadChatList();
+                return;
+            }
+
             chatWithUser = username;
             document.getElementById('chatListContainer').style.display = 'none';
             document.getElementById('chatContainer').style.display = 'block';
@@ -1599,6 +1739,7 @@
             chatWithUser = null;
             document.getElementById('chatListContainer').style.display = 'block';
             document.getElementById('chatContainer').style.display = 'none';
+            loadChatList(); // Refresh danh sách
         }
 
         function loadPrivateMessages(username) {
@@ -1630,6 +1771,13 @@
 
         function sendPrivateMessage() {
             if (!chatWithUser) return;
+            // Kiểm tra lại bạn bè
+            if (!myFriends || !myFriends[chatWithUser]) {
+                showToast('⚠️ Không thể chat với người này!', 'error');
+                closeChat();
+                return;
+            }
+
             const input = document.getElementById('chatInput');
             const content = input.value.trim();
             if (!content) return;
