@@ -20,7 +20,7 @@
             background: linear-gradient(135deg, #0a0a1a, #1a0a2e, #0a0a1a);
             color: #fff;
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: linear-gradient(#ff2d75, #a855f7); border-radius: 10px; }
@@ -86,16 +86,30 @@
         .login-box input:focus { border-color:#ff2d75; box-shadow:0 0 25px rgba(255,45,117,0.15); }
         .login-box input::placeholder { color:#666; }
 
-        .btn-login {
-            width:100%; padding:12px;
-            border:none; border-radius:12px;
-            font-weight:700; font-size:0.9rem;
-            cursor:pointer;
-            background:linear-gradient(135deg,#ff2d75,#a855f7);
-            color:#fff;
-            transition:0.3s;
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        .btn-login:hover { box-shadow:0 0 40px rgba(255,45,117,0.2); transform:translateY(-2px); }
+        .btn:active { transform: scale(0.95); }
+        .btn-primary { background: linear-gradient(135deg, #ff2d75, #a855f7); color: #fff; }
+        .btn-primary:hover { box-shadow: 0 0 30px rgba(255,45,117,0.3); }
+        .btn-success { background: #22c55e; color: #fff; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-danger { background: #ef4444; color: #fff; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-warning { background: #f59e0b; color: #000; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-outline { background: transparent; border: 1px solid #2a1a4a; color: #8888aa; }
+        .btn-outline:hover { border-color: #ff2d75; color: #ff2d75; }
+        .btn-sm { padding: 6px 14px; font-size: 0.7rem; }
 
         /* ====== HEADER ====== */
         .header {
@@ -145,86 +159,121 @@
         }
         .header .user-info .logout-btn:hover { border-color: #ef4444; color: #ef4444; }
 
+        /* ====== COINS ====== */
+        .coins-display {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,215,0,0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,215,0,0.2);
+        }
+        .coins-display i { color: #f59e0b; }
+        .coins-display span { font-weight: 700; color: #f59e0b; }
+
         /* ====== LOBBY ====== */
         .lobby {
             background: rgba(17,17,34,0.9);
             border-radius: 16px;
             padding: 20px;
             border: 1px solid #2a1a4a;
-            text-align: center;
         }
-        .lobby .room-code {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(90deg, #ff2d75, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 5px 0;
-        }
-        .lobby .players {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+
+        .lobby .lobby-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
             gap: 10px;
-            margin: 15px 0;
+            margin-bottom: 15px;
         }
-        .lobby .players .player-slot {
+        .lobby .lobby-header h3 { font-size: 1rem; }
+
+        /* ====== BIKE SHOP ====== */
+        .bike-shop {
             background: rgba(2,6,23,0.6);
             border-radius: 12px;
-            padding: 15px 10px;
+            padding: 15px;
+            margin-bottom: 15px;
             border: 1px solid #2a1a4a;
-            min-height: 80px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
-        .lobby .players .player-slot .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ff2d75, #a855f7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .bike-shop .shop-title {
             font-weight: 700;
-            font-size: 1rem;
-            color: #fff;
-            margin-bottom: 4px;
-        }
-        .lobby .players .player-slot .name { font-size: 0.7rem; color: #e0e0ff; }
-        .lobby .players .player-slot .status { font-size: 0.6rem; color: #8888aa; }
-        .lobby .players .player-slot .status.ready { color: #22c55e; }
-        .lobby .players .player-slot .status.waiting { color: #f59e0b; }
-        .lobby .players .player-slot .status.playing { color: #00d4ff; }
-
-        .lobby .btn-group {
+            color: #ff2d75;
+            margin-bottom: 10px;
             display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .bike-shop .bike-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 10px;
         }
-        .btn {
-            padding: 10px 24px;
-            border: none;
+        .bike-shop .bike-item {
+            background: rgba(17,17,34,0.8);
             border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.85rem;
+            padding: 12px;
+            text-align: center;
+            border: 2px solid transparent;
             cursor: pointer;
             transition: 0.3s;
         }
-        .btn:active { transform: scale(0.95); }
-        .btn-primary { background: linear-gradient(135deg, #ff2d75, #a855f7); color: #fff; }
-        .btn-primary:hover { box-shadow: 0 0 30px rgba(255,45,117,0.3); }
-        .btn-success { background: #22c55e; color: #fff; }
-        .btn-success:hover { background: #16a34a; }
-        .btn-danger { background: #ef4444; color: #fff; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-warning { background: #f59e0b; color: #000; }
-        .btn-warning:hover { background: #d97706; }
-        .btn-outline { background: transparent; border: 1px solid #2a1a4a; color: #8888aa; }
-        .btn-outline:hover { border-color: #ff2d75; color: #ff2d75; }
-        .btn-sm { padding: 6px 14px; font-size: 0.7rem; }
+        .bike-shop .bike-item:hover { border-color: #ff2d75; }
+        .bike-shop .bike-item.active { border-color: #00d4ff; background: rgba(0,212,255,0.05); }
+        .bike-shop .bike-item .bike-icon { font-size: 2rem; display: block; }
+        .bike-shop .bike-item .bike-name { font-size: 0.7rem; font-weight: 600; margin: 4px 0; }
+        .bike-shop .bike-item .bike-price { font-size: 0.6rem; color: #f59e0b; }
+        .bike-shop .bike-item .bike-stats { font-size: 0.55rem; color: #8888aa; }
+        .bike-shop .bike-item .bike-owned { font-size: 0.55rem; color: #22c55e; }
+
+        /* ====== ROOM LIST ====== */
+        .room-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .room-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: rgba(2,6,23,0.6);
+            border-radius: 10px;
+            border: 1px solid #2a1a4a;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .room-item .room-info .room-id { font-weight: 700; color: #ff2d75; font-size: 0.9rem; }
+        .room-item .room-info .room-players { font-size: 0.7rem; color: #8888aa; }
+        .room-item .room-status { font-size: 0.65rem; }
+        .room-item .room-status.waiting { color: #f59e0b; }
+        .room-item .room-status.playing { color: #22c55e; }
+
+        /* ====== CREATE ROOM ====== */
+        .create-room {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .create-room input {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(2,6,23,0.8);
+            border: 1px solid #2a1a4a;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+            min-width: 120px;
+        }
+        .create-room input:focus { border-color: #ff2d75; }
+        .create-room .btn { flex: 0 1 auto; }
 
         /* ====== GAME ====== */
         .game-container {
@@ -314,7 +363,6 @@
             0% { transform: translateY(-50%) scale(0.5); opacity: 1; }
             100% { transform: translateY(-50%) scale(2); opacity: 0; }
         }
-
         .race-track .bike.me { filter: drop-shadow(0 0 20px rgba(0,212,255,0.5)); }
         .race-track .bike .avatar-small {
             width: 24px;
@@ -331,6 +379,7 @@
             left: 50%;
             transform: translateX(-50%);
         }
+        .race-track .bike.bot { filter: drop-shadow(0 0 10px rgba(168,85,247,0.3)); }
 
         /* ====== CONTROLS ====== */
         .controls {
@@ -425,19 +474,32 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* ====== RESPONSIVE ====== */
-        @media (max-width: 600px) {
-            .lobby .players { grid-template-columns: repeat(2, 1fr); }
-            .controls .control-btn { width: 60px; height: 60px; font-size: 1.4rem; }
-            .race-track { height: 350px; }
-            .countdown-overlay .number { font-size: 4rem; }
-            .login-box { padding: 25px 20px; }
+        /* ====== RESULTS ====== */
+        .results {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 20px;
         }
-        @media (max-width: 400px) {
-            .controls .control-btn { width: 50px; height: 50px; font-size: 1.2rem; }
-            .race-track { height: 280px; }
-            .lobby .players .player-slot { min-height: 60px; padding: 10px; }
+        .results.show { display: flex; }
+        .results .box {
+            background: rgba(17,17,34,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 450px;
+            width: 100%;
+            border: 2px solid #ff2d75;
+            text-align: center;
         }
+        .results .box .trophy { font-size: 4rem; margin-bottom: 10px; }
+        .results .box .winner { font-size: 1.5rem; font-weight: 700; color: #ff2d75; }
+        .results .box .sub { color: #8888aa; font-size: 0.9rem; margin: 5px 0 15px; }
+        .results .box .reward { color: #f59e0b; font-size: 0.9rem; margin-bottom: 10px; }
 
         /* ====== TOAST ====== */
         .toast {
@@ -462,43 +524,20 @@
             100% { opacity:1; transform:translateX(-50%) translateY(0); }
         }
 
-        /* ====== RESULTS ====== */
-        .results {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(15px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-            padding: 20px;
+        /* ====== RESPONSIVE ====== */
+        @media (max-width: 600px) {
+            .bike-shop .bike-list { grid-template-columns: repeat(2, 1fr); }
+            .controls .control-btn { width: 60px; height: 60px; font-size: 1.4rem; }
+            .race-track { height: 350px; }
+            .countdown-overlay .number { font-size: 4rem; }
+            .login-box { padding: 25px 20px; }
+            .room-item { flex-direction: column; align-items: stretch; text-align: center; }
         }
-        .results.show { display: flex; }
-        .results .box {
-            background: rgba(17,17,34,0.95);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 450px;
-            width: 100%;
-            border: 2px solid #ff2d75;
-            text-align: center;
+        @media (max-width: 400px) {
+            .controls .control-btn { width: 50px; height: 50px; font-size: 1.2rem; }
+            .race-track { height: 280px; }
+            .bike-shop .bike-list { grid-template-columns: 1fr 1fr; }
         }
-        .results .box .trophy {
-            font-size: 4rem;
-            margin-bottom: 10px;
-        }
-        .results .box .winner {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ff2d75;
-        }
-        .results .box .sub {
-            color: #8888aa;
-            font-size: 0.9rem;
-            margin: 5px 0 15px;
-        }
-        .results .box .btn { margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -512,7 +551,7 @@
             
             <div id="loginForm">
                 <input type="text" id="loginUsername" placeholder="👤 Tên của bạn">
-                <button class="btn-login" onclick="handleLogin()">🚴 Vào Phòng</button>
+                <button class="btn-login" onclick="handleLogin()">🚴 Vào Sảnh</button>
             </div>
         </div>
     </div>
@@ -526,43 +565,47 @@
             <div class="user-info">
                 <div class="avatar" id="userAvatar">A</div>
                 <span class="name" id="userName">User</span>
+                <div class="coins-display">
+                    <i class="fas fa-coins"></i>
+                    <span id="userCoins">100</span>
+                </div>
                 <button class="logout-btn" onclick="logout()">🚪</button>
             </div>
         </div>
 
         <!-- LOBBY -->
         <div class="lobby" id="lobby">
-            <h3>🏠 Phòng Chờ</h3>
-            <div class="room-code">🔑 Mã phòng: <span id="roomCode">------</span></div>
-            
-            <div class="players" id="playersList">
-                <div class="player-slot">
-                    <div class="avatar">👤</div>
-                    <div class="name">Chờ người chơi...</div>
-                    <div class="status waiting">⏳ Đang chờ</div>
-                </div>
-                <div class="player-slot">
-                    <div class="avatar">👤</div>
-                    <div class="name">Chờ người chơi...</div>
-                    <div class="status waiting">⏳ Đang chờ</div>
-                </div>
-                <div class="player-slot">
-                    <div class="avatar">👤</div>
-                    <div class="name">Chờ người chơi...</div>
-                    <div class="status waiting">⏳ Đang chờ</div>
-                </div>
-                <div class="player-slot">
-                    <div class="avatar">👤</div>
-                    <div class="name">Chờ người chơi...</div>
-                    <div class="status waiting">⏳ Đang chờ</div>
+            <div class="lobby-header">
+                <h3>🏠 Sảnh chính</h3>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="btn btn-sm btn-primary" onclick="showShop()">🏪 Cửa hàng</button>
+                    <button class="btn btn-sm btn-outline" onclick="refreshRooms()">🔄 Làm mới</button>
                 </div>
             </div>
 
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="startGame()">🏁 Bắt Đầu</button>
-                <button class="btn btn-outline" onclick="createRoom()">🔄 Tạo Phòng Mới</button>
-                <button class="btn btn-outline" onclick="leaveRoom()">🚪 Rời Phòng</button>
+            <!-- Bike Shop -->
+            <div class="bike-shop" id="bikeShop" style="display:none;">
+                <div class="shop-title"><i class="fas fa-store"></i> Cửa hàng xe đạp</div>
+                <div class="bike-list" id="bikeShopList"></div>
             </div>
+
+            <!-- Create Room -->
+            <div class="create-room">
+                <input type="text" id="roomNameInput" placeholder="🏷️ Tên phòng (tùy chọn)">
+                <button class="btn btn-primary" onclick="createRoom()">🆕 Tạo Phòng</button>
+                <button class="btn btn-success" onclick="quickPlay()">⚡ Chơi Nhanh</button>
+            </div>
+
+            <!-- Room List -->
+            <h4 style="margin:10px 0 5px;font-size:0.85rem;">📋 Danh sách phòng</h4>
+            <div class="room-list" id="roomList">
+                <div style="text-align:center;color:#8888aa;padding:20px;font-size:0.8rem;">
+                    <i class="fas fa-spinner fa-spin"></i> Đang tải phòng...
+                </div>
+            </div>
+
+            <!-- My Room -->
+            <div id="myRoomContainer" style="margin-top:10px;"></div>
         </div>
 
         <!-- GAME -->
@@ -575,9 +618,8 @@
                 </div>
             </div>
 
-            <!-- CONTROLS -->
             <div class="controls" id="controls">
-                <button class="control-btn" id="btnUp" onmousedown="startPedal('up')" onmouseup="stopPedal()" ontouchstart="startPedal('up')" ontouchend="stopPedal()">
+                <button class="control-btn" id="btnUp" onmousedown="startPedal()" onmouseup="stopPedal()" ontouchstart="startPedal()" ontouchend="stopPedal()">
                     <div class="icon-wrap">
                         <i class="fas fa-arrow-up"></i>
                         <span class="key-hint">↑ / W</span>
@@ -591,7 +633,6 @@
                 </button>
             </div>
 
-            <!-- RANKING -->
             <div class="ranking" id="ranking">
                 <div style="display:flex;justify-content:space-between;padding:5px 10px;border-bottom:1px solid #2a1a4a;font-weight:700;font-size:0.8rem;">
                     <span>#</span><span>Tên</span><span>Thời gian</span>
@@ -608,7 +649,8 @@
             <div class="trophy" id="resultTrophy">🏆</div>
             <div class="winner" id="resultWinner">Người chiến thắng!</div>
             <div class="sub" id="resultSub">Hoàn thành trong 0s</div>
-            <button class="btn btn-primary" onclick="backToLobby()">🏠 Về Phòng Chờ</button>
+            <div class="reward" id="resultReward">💰 +10 xu</div>
+            <button class="btn btn-primary" onclick="backToLobby()">🏠 Về Sảnh</button>
         </div>
     </div>
 
@@ -631,24 +673,38 @@
 
         // ====== GAME STATE ======
         let currentUser = null;
-        let roomId = null;
+        let currentRoomId = null;
         let gameRef = null;
         let players = {};
         let bikePositions = {};
         let isPlaying = false;
         let isPedaling = false;
         let isBoosting = false;
-        let pedalInterval = null;
-        let boostInterval = null;
         let gameLoop = null;
         let startTime = 0;
         let finishedPlayers = [];
+        let isBotGame = false;
+        let botPlayers = {};
+        let coins = 100;
+        let userBikes = ['🚴'];
+        let currentBike = '🚴';
+        let bikeStats = { speed: 1, boost: 1 };
+
+        // ====== BIKE DATA ======
+        const BIKES = {
+            '🚴': { name: 'Xe Cơ Bản', price: 0, speed: 1, boost: 1, emoji: '🚴' },
+            '🚲': { name: 'Xe Địa Hình', price: 50, speed: 1.2, boost: 1.1, emoji: '🚲' },
+            '🏍️': { name: 'Xe Thể Thao', price: 100, speed: 1.5, boost: 1.3, emoji: '🏍️' },
+            '🛵': { name: 'Xe Điện', price: 150, speed: 1.3, boost: 1.5, emoji: '🛵' },
+            '🚵': { name: 'Xe Đua Chuyên Nghiệp', price: 200, speed: 1.8, boost: 1.6, emoji: '🚵' },
+            '🏁': { name: 'Xe Vô Địch', price: 300, speed: 2.0, boost: 2.0, emoji: '🏁' }
+        };
 
         // ====== KEYBOARD CONTROLS ======
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
                 e.preventDefault();
-                startPedal('up');
+                startPedal();
             }
             if (e.key === ' ' || e.key === 'Space') {
                 e.preventDefault();
@@ -675,7 +731,9 @@
             document.getElementById('mainApp').classList.add('active');
             document.getElementById('userName').textContent = name;
             document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
-            createRoom();
+            document.getElementById('userCoins').textContent = coins;
+            loadUserData();
+            loadRooms();
         }
 
         function logout() {
@@ -685,37 +743,220 @@
             currentUser = null;
         }
 
-        // ====== ROOM ======
-        function createRoom() {
-            if (gameRef) {
-                gameRef.off();
-                gameRef.remove();
+        function loadUserData() {
+            db.ref('users/' + currentUser).once('value').then(snap => {
+                if (snap.exists()) {
+                    const data = snap.val();
+                    coins = data.coins || 100;
+                    userBikes = data.bikes || ['🚴'];
+                    currentBike = data.currentBike || '🚴';
+                    document.getElementById('userCoins').textContent = coins;
+                } else {
+                    db.ref('users/' + currentUser).set({
+                        coins: 100,
+                        bikes: ['🚴'],
+                        currentBike: '🚴'
+                    });
+                }
+                updateBikeShop();
+            });
+        }
+
+        function saveUserData() {
+            db.ref('users/' + currentUser).update({
+                coins: coins,
+                bikes: userBikes,
+                currentBike: currentBike
+            });
+            document.getElementById('userCoins').textContent = coins;
+        }
+
+        // ====== BIKE SHOP ======
+        function showShop() {
+            const shop = document.getElementById('bikeShop');
+            shop.style.display = shop.style.display === 'none' ? 'block' : 'none';
+            updateBikeShop();
+        }
+
+        function updateBikeShop() {
+            const container = document.getElementById('bikeShopList');
+            let html = '';
+            Object.keys(BIKES).forEach(key => {
+                const bike = BIKES[key];
+                const owned = userBikes.includes(key);
+                const isActive = currentBike === key;
+                html += `
+                    <div class="bike-item ${isActive ? 'active' : ''}" onclick="selectBike('${key}')">
+                        <span class="bike-icon">${bike.emoji}</span>
+                        <div class="bike-name">${bike.name}</div>
+                        <div class="bike-stats">⚡${bike.speed} 💨${bike.boost}</div>
+                        ${owned ? `<div class="bike-owned">✅ Sở hữu</div>` : `<div class="bike-price">💰 ${bike.price} xu</div>`}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function selectBike(bikeKey) {
+            if (userBikes.includes(bikeKey)) {
+                currentBike = bikeKey;
+                bikeStats = BIKES[bikeKey];
+                saveUserData();
+                updateBikeShop();
+                showToast(`✅ Đã chọn ${BIKES[bikeKey].name}`);
+            } else {
+                const bike = BIKES[bikeKey];
+                if (coins >= bike.price) {
+                    coins -= bike.price;
+                    userBikes.push(bikeKey);
+                    currentBike = bikeKey;
+                    bikeStats = bike;
+                    saveUserData();
+                    updateBikeShop();
+                    showToast(`🎉 Đã mua ${bike.name}!`);
+                } else {
+                    showToast(`❌ Không đủ xu! Cần ${bike.price} xu`);
+                }
             }
-            roomId = 'room_' + Date.now().toString().slice(-6);
-            gameRef = db.ref('games/' + roomId);
+        }
+
+        // ====== ROOMS ======
+        function loadRooms() {
+            db.ref('rooms').on('value', (snap) => {
+                const data = snap.val();
+                const container = document.getElementById('roomList');
+                if (!data) {
+                    container.innerHTML = `
+                        <div style="text-align:center;color:#8888aa;padding:20px;font-size:0.8rem;">
+                            <i class="fas fa-door-open"></i> Chưa có phòng nào. Hãy tạo phòng mới!
+                        </div>
+                    `;
+                    return;
+                }
+                let html = '';
+                Object.keys(data).forEach(roomId => {
+                    const room = data[roomId];
+                    if (room.status === 'playing') return;
+                    const playerCount = room.players ? Object.keys(room.players).length : 0;
+                    html += `
+                        <div class="room-item">
+                            <div class="room-info">
+                                <div class="room-id">🔑 ${room.name || roomId}</div>
+                                <div class="room-players">👥 ${playerCount}/4 người</div>
+                            </div>
+                            <div class="room-status waiting">⏳ Đang chờ</div>
+                            <button class="btn btn-sm btn-success" onclick="joinRoom('${roomId}')">🚴 Vào phòng</button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html || `<div style="text-align:center;color:#8888aa;padding:20px;font-size:0.8rem;">Chưa có phòng nào.</div>`;
+            });
+        }
+
+        function refreshRooms() {
+            loadRooms();
+            showToast('🔄 Đã làm mới danh sách phòng');
+        }
+
+        function createRoom() {
+            const nameInput = document.getElementById('roomNameInput');
+            const roomName = nameInput.value.trim() || 'Phòng của ' + document.getElementById('userName').textContent;
+            const roomId = 'room_' + Date.now().toString().slice(-6);
+            
+            if (currentRoomId) {
+                leaveRoom();
+            }
+            
+            currentRoomId = roomId;
+            gameRef = db.ref('rooms/' + roomId);
             
             const playerData = {
                 name: document.getElementById('userName').textContent,
                 avatar: document.getElementById('userAvatar').textContent,
+                bike: currentBike,
                 ready: false,
                 position: 0,
                 finished: false,
-                finishTime: 0
+                finishTime: 0,
+                isBot: false
             };
             
             gameRef.set({
-                players: { [currentUser]: playerData },
+                name: roomName,
+                host: currentUser,
                 status: 'waiting',
+                players: { [currentUser]: playerData },
                 startTime: 0,
                 finished: []
             }).then(() => {
-                document.getElementById('roomCode').textContent = roomId;
-                joinRoom();
+                nameInput.value = '';
+                document.getElementById('myRoomContainer').innerHTML = `
+                    <div style="background:rgba(2,6,23,0.6);border-radius:12px;padding:12px;border:1px solid #2a1a4a;text-align:center;">
+                        <div style="font-weight:700;color:#ff2d75;">🏠 Phòng: ${roomName}</div>
+                        <div style="font-size:0.8rem;color:#8888aa;">🔑 Mã: ${roomId}</div>
+                        <div style="margin-top:8px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+                            <button class="btn btn-sm btn-primary" onclick="startGame()">🏁 Bắt đầu</button>
+                            <button class="btn btn-sm btn-danger" onclick="leaveRoom()">🚪 Rời phòng</button>
+                        </div>
+                    </div>
+                `;
+                showToast(`✅ Đã tạo phòng: ${roomName}`);
+                joinRoomListener();
             });
         }
 
-        function joinRoom() {
-            // Lắng nghe cập nhật phòng
+        function quickPlay() {
+            // Tìm phòng có sẵn hoặc tạo mới
+            db.ref('rooms').once('value', (snap) => {
+                const data = snap.val();
+                if (data) {
+                    let found = false;
+                    Object.keys(data).forEach(roomId => {
+                        const room = data[roomId];
+                        if (room.status === 'waiting' && (!room.players || Object.keys(room.players).length < 4)) {
+                            joinRoom(roomId);
+                            found = true;
+                            return;
+                        }
+                    });
+                    if (!found) createRoom();
+                } else {
+                    createRoom();
+                }
+            });
+        }
+
+        function joinRoom(roomId) {
+            if (currentRoomId) leaveRoom();
+            currentRoomId = roomId;
+            gameRef = db.ref('rooms/' + roomId);
+            
+            const playerData = {
+                name: document.getElementById('userName').textContent,
+                avatar: document.getElementById('userAvatar').textContent,
+                bike: currentBike,
+                ready: false,
+                position: 0,
+                finished: false,
+                finishTime: 0,
+                isBot: false
+            };
+            
+            gameRef.child('players/' + currentUser).set(playerData).then(() => {
+                document.getElementById('myRoomContainer').innerHTML = `
+                    <div style="background:rgba(2,6,23,0.6);border-radius:12px;padding:12px;border:1px solid #2a1a4a;text-align:center;">
+                        <div style="font-weight:700;color:#00d4ff;">🔗 Đã vào phòng</div>
+                        <div style="font-size:0.8rem;color:#8888aa;">⏳ Đợi chủ phòng bắt đầu...</div>
+                        <button class="btn btn-sm btn-danger" onclick="leaveRoom()" style="margin-top:8px;">🚪 Rời phòng</button>
+                    </div>
+                `;
+                showToast('✅ Đã vào phòng!');
+                joinRoomListener();
+            });
+        }
+
+        function joinRoomListener() {
+            if (!gameRef) return;
             gameRef.on('value', (snap) => {
                 const data = snap.val();
                 if (!data) return;
@@ -723,23 +964,19 @@
                 players = data.players || {};
                 const status = data.status || 'waiting';
                 
-                // Cập nhật danh sách người chơi
                 updatePlayersList();
                 
-                // Nếu game đang chạy và chưa bắt đầu thì vào game
                 if (status === 'playing' && !isPlaying) {
                     startGameplay();
                 }
                 
-                // Cập nhật vị trí xe
                 if (status === 'playing') {
                     updateBikes(players);
                 }
                 
-                // Kiểm tra kết thúc
                 if (data.finished && data.finished.length > 0) {
                     finishedPlayers = data.finished || [];
-                    if (finishedPlayers.length >= 2) {
+                    if (finishedPlayers.length >= 2 || finishedPlayers.length === Object.keys(players).length) {
                         showResults();
                     }
                 }
@@ -748,6 +985,8 @@
 
         function updatePlayersList() {
             const container = document.getElementById('playersList');
+            if (!container) return;
+            
             const playerKeys = Object.keys(players);
             let html = '';
             
@@ -756,13 +995,12 @@
                 if (key && players[key]) {
                     const p = players[key];
                     const isMe = key === currentUser;
-                    const statusText = p.ready ? '✅ Sẵn sàng' : '⏳ Đang chờ';
-                    const statusClass = p.ready ? 'ready' : 'waiting';
+                    const isBot = p.isBot || false;
                     html += `
                         <div class="player-slot" style="${isMe ? 'border-color:#00d4ff;' : ''}">
                             <div class="avatar">${p.avatar || '👤'}</div>
-                            <div class="name">${p.name} ${isMe ? '(Bạn)' : ''}</div>
-                            <div class="status ${statusClass}">${statusText}</div>
+                            <div class="name">${p.name} ${isMe ? '(Bạn)' : ''} ${isBot ? '🤖' : ''}</div>
+                            <div class="status ${p.ready ? 'ready' : 'waiting'}">${p.ready ? '✅ Sẵn sàng' : '⏳ Đang chờ'}</div>
                         </div>
                     `;
                 } else {
@@ -778,19 +1016,36 @@
             container.innerHTML = html;
         }
 
+        function leaveRoom() {
+            if (gameRef) {
+                if (currentUser) {
+                    gameRef.child('players/' + currentUser).remove();
+                }
+                gameRef.off();
+                gameRef = null;
+            }
+            currentRoomId = null;
+            isPlaying = false;
+            document.getElementById('gameContainer').classList.remove('active');
+            document.getElementById('myRoomContainer').innerHTML = '';
+            document.getElementById('bikesContainer').innerHTML = '';
+            document.getElementById('lobby').style.display = 'block';
+            showToast('🚪 Đã rời phòng');
+        }
+
         // ====== START GAME ======
         function startGame() {
             if (!gameRef) return;
             
             const playerKeys = Object.keys(players);
             if (playerKeys.length < 2) {
-                showToast('⚠️ Cần ít nhất 2 người chơi!');
-                return;
+                // Thêm bot nếu thiếu người
+                addBots();
             }
             
             // Đánh dấu tất cả ready
             const updates = {};
-            playerKeys.forEach(key => {
+            Object.keys(players).forEach(key => {
                 updates['players/' + key + '/ready'] = true;
             });
             updates['status'] = 'playing';
@@ -804,15 +1059,48 @@
             });
         }
 
+        function addBots() {
+            const playerKeys = Object.keys(players);
+            const botCount = 4 - playerKeys.length;
+            const botNames = ['🤖 Bot Xanh', '🤖 Bot Đỏ', '🤖 Bot Tím'];
+            const botEmojis = ['🟦', '🟥', '🟪'];
+            
+            for (let i = 0; i < botCount && i < 3; i++) {
+                const botId = 'bot_' + Date.now() + '_' + i;
+                players[botId] = {
+                    name: botNames[i] || '🤖 Bot',
+                    avatar: botEmojis[i] || '🤖',
+                    bike: Object.keys(BIKES)[Math.floor(Math.random() * 3)],
+                    ready: true,
+                    position: 0,
+                    finished: false,
+                    finishTime: 0,
+                    isBot: true,
+                    botLevel: Math.random() * 0.5 + 0.5
+                };
+                gameRef.child('players/' + botId).set(players[botId]);
+            }
+            isBotGame = true;
+        }
+
         // ====== GAMEPLAY ======
         function startGameplay() {
             if (isPlaying) return;
             isPlaying = true;
             
-            // Reset
             bikePositions = {};
             finishedPlayers = [];
             startTime = Date.now();
+            
+            // Reset positions
+            Object.keys(players).forEach(key => {
+                bikePositions[key] = 0;
+                if (gameRef) {
+                    gameRef.child('players/' + key + '/position').set(0);
+                    gameRef.child('players/' + key + '/finished').set(false);
+                    gameRef.child('players/' + key + '/finishTime').set(0);
+                }
+            });
             
             // Countdown
             const overlay = document.getElementById('countdownOverlay');
@@ -831,7 +1119,6 @@
                     setTimeout(() => {
                         overlay.classList.remove('active');
                     }, 300);
-                    // Bắt đầu game loop
                     startGameLoop();
                 }
             }, 1000);
@@ -844,16 +1131,14 @@
                 if (!isPlaying) return;
                 
                 // Cập nhật vị trí người chơi
-                const speed = isBoosting ? 3 : (isPedaling ? 1.5 : 0.5);
+                const speed = isBoosting ? bikeStats.boost * 2 : (isPedaling ? bikeStats.speed * 1.5 : 0.5);
                 const currentPos = bikePositions[currentUser] || 0;
                 const newPos = Math.min(currentPos + speed, 100);
                 bikePositions[currentUser] = newPos;
                 
-                // Cập nhật lên Firebase
                 if (gameRef) {
                     gameRef.child('players/' + currentUser + '/position').set(newPos);
                     
-                    // Kiểm tra về đích
                     if (newPos >= 100 && !finishedPlayers.includes(currentUser)) {
                         const finishTime = (Date.now() - startTime) / 1000;
                         finishedPlayers.push(currentUser);
@@ -864,26 +1149,54 @@
                     }
                 }
                 
-                // Cập nhật xe
                 updateBike(currentUser, newPos);
+                updateBotPositions();
                 
             }, 100);
+        }
+
+        function updateBotPositions() {
+            if (!gameRef) return;
+            
+            Object.keys(players).forEach(key => {
+                if (key === currentUser || !players[key].isBot) return;
+                
+                const bot = players[key];
+                const botSpeed = (0.3 + Math.random() * 0.4) * (bot.botLevel || 0.5);
+                const currentPos = bikePositions[key] || 0;
+                const newPos = Math.min(currentPos + botSpeed, 100);
+                bikePositions[key] = newPos;
+                
+                gameRef.child('players/' + key + '/position').set(newPos);
+                
+                if (newPos >= 100 && !finishedPlayers.includes(key)) {
+                    const finishTime = (Date.now() - startTime) / 1000;
+                    finishedPlayers.push(key);
+                    gameRef.child('players/' + key + '/finished').set(true);
+                    gameRef.child('players/' + key + '/finishTime').set(finishTime);
+                    gameRef.child('finished').set(finishedPlayers);
+                }
+                
+                updateBike(key, newPos);
+            });
         }
 
         function updateBike(userId, pos) {
             const container = document.getElementById('bikesContainer');
             let bikeEl = document.getElementById('bike-' + userId);
+            const isBot = players[userId]?.isBot || false;
+            const bikeEmoji = players[userId]?.bike || '🚴';
             
             if (!bikeEl) {
                 const data = players[userId] || { name: 'Player', avatar: '👤' };
                 bikeEl = document.createElement('div');
                 bikeEl.id = 'bike-' + userId;
-                bikeEl.className = 'bike' + (userId === currentUser ? ' me' : '');
+                bikeEl.className = 'bike' + (userId === currentUser ? ' me' : '') + (isBot ? ' bot' : '');
                 bikeEl.innerHTML = `
                     <div class="avatar-small" style="background:${userId === currentUser ? 'linear-gradient(135deg,#00d4ff,#a855f7)' : 'linear-gradient(135deg,#ff2d75,#a855f7)'}">
                         ${data.avatar || '👤'}
                     </div>
-                    <span>🚴</span>
+                    <span>${bikeEmoji}</span>
                     <div class="name">${data.name || 'Player'}</div>
                     <div class="speed">0 km/h</div>
                     <div class="position">#${Object.keys(players).length}</div>
@@ -896,22 +1209,19 @@
             const xPos = 20 + (pos / 100) * trackWidth;
             bikeEl.style.left = xPos + 'px';
             
-            // Cập nhật tốc độ
             const speedEl = bikeEl.querySelector('.speed');
             if (speedEl) {
-                const speed = isBoosting ? 45 : (isPedaling ? 25 : 10);
-                speedEl.textContent = speed + ' km/h';
+                const speed = userId === currentUser ? (isBoosting ? 45 : (isPedaling ? 25 : 10)) : (isBot ? 15 + Math.random() * 10 : 10);
+                speedEl.textContent = Math.round(speed) + ' km/h';
                 speedEl.style.color = isBoosting ? '#ff2d75' : (isPedaling ? '#22c55e' : '#8888aa');
             }
             
-            // Cập nhật vị trí
             const posEl = bikeEl.querySelector('.position');
             if (posEl) {
                 const rank = getPlayerRank(userId);
                 posEl.textContent = '#' + rank;
             }
             
-            // Boost effect
             const boostEl = bikeEl.querySelector('.boost-effect');
             if (boostEl && isBoosting && userId === currentUser) {
                 boostEl.classList.add('active');
@@ -929,7 +1239,6 @@
                 updateBike(id, pos);
             });
             
-            // Xóa xe của người chơi đã rời
             const existingBikes = container.querySelectorAll('.bike');
             existingBikes.forEach(el => {
                 const id = el.id.replace('bike-', '');
@@ -949,7 +1258,7 @@
         }
 
         // ====== CONTROLS ======
-        function startPedal(direction) {
+        function startPedal() {
             if (!isPlaying) return;
             isPedaling = true;
         }
@@ -971,10 +1280,17 @@
         function showResults() {
             const sorted = finishedPlayers.slice(0, 3);
             const winner = sorted[0] || '';
+            const reward = winner === currentUser ? 20 : (finishedPlayers.includes(currentUser) ? 10 : 0);
+            
+            if (winner === currentUser) {
+                coins += reward;
+                saveUserData();
+            }
             
             document.getElementById('resultTrophy').textContent = winner === currentUser ? '🏆' : '🥈';
             document.getElementById('resultWinner').textContent = winner ? (players[winner]?.name || 'Player') + ' đã chiến thắng!' : 'Trận đấu kết thúc!';
             document.getElementById('resultSub').textContent = `Hoàn thành trong ${(players[winner]?.finishTime || 0).toFixed(1)}s`;
+            document.getElementById('resultReward').textContent = `💰 +${reward} xu`;
             document.getElementById('results').classList.add('show');
             
             if (gameLoop) clearInterval(gameLoop);
@@ -987,7 +1303,6 @@
             document.getElementById('lobby').style.display = 'block';
             document.getElementById('bikesContainer').innerHTML = '';
             
-            // Reset game
             if (gameRef) {
                 gameRef.child('status').set('waiting');
                 gameRef.child('finished').set([]);
@@ -999,21 +1314,8 @@
             }
             isPlaying = false;
             finishedPlayers = [];
-        }
-
-        function leaveRoom() {
-            if (gameRef) {
-                gameRef.off();
-                if (currentUser) {
-                    gameRef.child('players/' + currentUser).remove();
-                }
-                gameRef = null;
-            }
-            roomId = null;
-            isPlaying = false;
-            document.getElementById('gameContainer').classList.remove('active');
-            document.getElementById('lobby').style.display = 'block';
-            document.getElementById('bikesContainer').innerHTML = '';
+            isBotGame = false;
+            showToast('🏠 Đã về sảnh');
         }
 
         // ====== TOAST ======
@@ -1027,7 +1329,7 @@
 
         // ====== AUTO LOGIN ======
         window.onload = function() {
-            // Không tự động login, chờ user nhập
+            // Chờ người dùng nhập tên
         };
     </script>
 </body>
